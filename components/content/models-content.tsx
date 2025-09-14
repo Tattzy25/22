@@ -87,71 +87,73 @@ export function ModelsContent() {
     try {
       setIsLoading(true)
       setError(null)
-      const response = await fetch('/api/models')
-      if (response.ok) {
-        const data = await response.json()
-        setModels(data.models || [])
-        setProviders(['all', ...(data.providers || [])])
-      } else if (response.status === 404 || response.status >= 500) {
-        // API not available - show demo data
-        const demoModels = [
-          {
-            id: "gpt-4",
-            name: "GPT-4",
-            provider: "OpenAI",
-            description: "Most advanced GPT model with superior reasoning and creativity",
-            capabilities: ["Text Generation", "Code", "Analysis", "Creative Writing"],
-            pricing: { inputTokens: "$0.03/1K", outputTokens: "$0.06/1K" },
-            rating: 4.9,
-            contextWindow: 128000,
-            responseTime: "~2-3s",
-            status: "available" as const
-          },
-          {
-            id: "claude-3-opus",
-            name: "Claude 3 Opus",
-            provider: "Anthropic",
-            description: "Most capable Claude model for complex tasks and analysis",
-            capabilities: ["Analysis", "Research", "Long-form Content", "Math"],
-            pricing: { inputTokens: "$0.015/1K", outputTokens: "$0.075/1K" },
-            rating: 4.8,
-            contextWindow: 200000,
-            responseTime: "~2-4s",
-            status: "available" as const
-          },
-          {
-            id: "gemini-pro",
-            name: "Gemini Pro",
-            provider: "Google",
-            description: "Google's advanced multimodal model",
-            capabilities: ["Text Generation", "Code", "Analysis", "Multi-modal"],
-            pricing: { inputTokens: "$0.00025/1K", outputTokens: "$0.0005/1K" },
-            rating: 4.7,
-            contextWindow: 1000000,
-            responseTime: "~1-2s",
-            status: "available" as const
-          },
-          {
-            id: "command-r",
-            name: "Command R",
-            provider: "Cohere",
-            description: "Cohere's advanced language model for enterprise applications",
-            capabilities: ["Text Generation", "Analysis", "Tool Use"],
-            pricing: { inputTokens: "$0.00015/1K", outputTokens: "$0.0006/1K" },
-            rating: 4.3,
-            contextWindow: 128000,
-            responseTime: "~1-2s",
-            status: "available" as const
+
+      // Try to fetch from Supabase first
+      const { createClientComponentClient } = await import('@supabase/auth-helpers-nextjs')
+      const supabase = createClientComponentClient()
+
+      // Fetch models with their best available provider (highest priority, active)
+      const { data: modelsData, error: modelsError } = await supabase
+        .from('models')
+        .select(`
+          id,
+          name,
+          category,
+          capabilities,
+          description,
+          context_window,
+          response_time,
+          model_providers (
+            provider,
+            pricing,
+            priority,
+            is_active
+          )
+        `)
+        .order('name')
+
+      if (modelsError) {
+        console.error('Supabase error:', modelsError)
+        throw modelsError
+      }
+
+      if (modelsData && modelsData.length > 0) {
+        // Transform the data to match the expected format
+        const transformedModels: AIModel[] = modelsData.map(model => {
+          // Get the best available provider (highest priority, active)
+          const activeProviders = model.model_providers?.filter((mp: any) => mp.is_active) || []
+          const bestProvider = activeProviders.sort((a: any, b: any) => a.priority - b.priority)[0]
+
+          return {
+            id: model.id,
+            name: model.name,
+            provider: bestProvider?.provider || 'Unknown',
+            description: model.description || '',
+            capabilities: model.capabilities || [],
+            pricing: {
+              inputTokens: bestProvider?.pricing?.inputTokens || '',
+              outputTokens: bestProvider?.pricing?.outputTokens || '',
+            },
+            rating: 4.5, // Default rating since we don't have this in the schema
+            contextWindow: parseInt(model.context_window?.replace(/[^\d]/g, '') || '0'),
+            responseTime: model.response_time || 'Unknown',
+            status: 'available' as const
           }
-        ]
-        setModels(demoModels)
-        setProviders(['all', 'OpenAI', 'Anthropic', 'Google', 'Cohere'])
+        })
+
+        setModels(transformedModels)
+
+        // Extract unique providers
+        const uniqueProviders = ['all', ...new Set(transformedModels.map(m => m.provider))]
+        setProviders(uniqueProviders)
       } else {
-        setError('Failed to load models')
+        // No data from Supabase, show demo data
+        throw new Error('No models found')
       }
     } catch (err) {
-      // Network error - show demo data
-      const demoModels = [
+      console.error('Error loading models:', err)
+      // Fallback to demo data
+      const demoModels: AIModel[] = [
         {
           id: "gpt-4",
           name: "GPT-4",
@@ -179,7 +181,6 @@ export function ModelsContent() {
       ]
       setModels(demoModels)
       setProviders(['all', 'OpenAI', 'Anthropic'])
-      console.error('Error loading models:', err)
     } finally {
       setIsLoading(false)
     }
