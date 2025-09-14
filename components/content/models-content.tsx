@@ -275,8 +275,8 @@ export function ModelsContent() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="space-y-3 pt-0">
-              <div className="space-y-0.25 mt-0">
+            <CardContent className="flex flex-col pt-0 min-h-[120px]">
+              <div className="space-y-0.25">
                 {model.capabilities.slice(0, 4).map(capability => (
                   <div key={capability} className="flex items-center text-sm text-muted-foreground">
                     <span className="mr-2">•</span>
@@ -285,10 +285,10 @@ export function ModelsContent() {
                 ))}
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-2 mt-auto pt-4">
                 <Button size="sm" className="flex-1">
-                  <Zap className="h-4 w-4 mr-2" />
-                  Try Now
+                  <Zap className="h-4 w-4 mr-1" />
+                  <span className="text-2xl font-medium font-audiowide">Tap to Try</span>
                 </Button>
                 <Dialog>
                   <DialogTrigger asChild>
