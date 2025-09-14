@@ -1,4 +1,6 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClientComponentClient, createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@supabase/supabase-js'
+import { cookies } from 'next/headers'
 import { DatabaseService } from './database'
 
 export interface User {
@@ -14,7 +16,20 @@ export class AuthService {
   private databaseService
 
   constructor() {
-    this.supabase = createClientComponentClient()
+    // Check if we're in a server context (API routes) or client context
+    const isServer = typeof window === 'undefined'
+
+    if (isServer) {
+      // Server context - use server client
+      this.supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      )
+    } else {
+      // Client context - use component client
+      this.supabase = createClientComponentClient()
+    }
+
     this.databaseService = new DatabaseService()
   }
 

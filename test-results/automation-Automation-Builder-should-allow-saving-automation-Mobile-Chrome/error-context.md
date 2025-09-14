@@ -2,139 +2,126 @@
 
 ```yaml
 - generic [ref=e1]:
-  - main [ref=e3]:
-    - generic [ref=e5]:
-      - button "Toggle Sidebar" [ref=e6]:
-        - img
-        - generic [ref=e7]: Toggle Sidebar
-      - navigation "breadcrumb" [ref=e8]:
-        - list [ref=e9]:
-          - listitem [ref=e10]:
-            - link "Automation" [disabled] [ref=e11]
-    - generic [ref=e12]:
-      - generic [ref=e13]:
-        - generic [ref=e14]:
-          - generic [ref=e15]:
-            - heading "Automation Builder" [level=2] [ref=e16]
-            - paragraph [ref=e17]: Create AI workflows with drag-and-drop automation
-          - textbox "Automation name" [active] [ref=e18]: Test Automation
-        - generic [ref=e19]:
-          - button "Save" [ref=e20]:
-            - img
-            - text: Save
-          - button "Run" [ref=e21]:
-            - img
-            - text: Run
-      - generic [ref=e22]:
-        - generic [ref=e24]:
-          - generic [ref=e25]:
-            - generic [ref=e26]:
-              - img [ref=e27]
-              - text: Components
-            - generic [ref=e28]: Drag components to build your automation
-          - generic [ref=e33]:
-            - generic [ref=e34]:
-              - heading "triggers" [level=4] [ref=e35]
-              - generic [ref=e36]:
-                - generic [ref=e38] [cursor=pointer]:
-                  - img [ref=e39] [cursor=pointer]
-                  - generic [ref=e43] [cursor=pointer]:
-                    - generic [ref=e44] [cursor=pointer]: Webhook Trigger
-                    - generic [ref=e45] [cursor=pointer]: HTTP webhook trigger
-                - generic [ref=e47] [cursor=pointer]:
-                  - img [ref=e48] [cursor=pointer]
-                  - generic [ref=e50] [cursor=pointer]:
-                    - generic [ref=e51] [cursor=pointer]: Schedule Trigger
-                    - generic [ref=e52] [cursor=pointer]: Time-based trigger
-                - generic [ref=e54] [cursor=pointer]:
-                  - img [ref=e55] [cursor=pointer]
-                  - generic [ref=e58] [cursor=pointer]:
-                    - generic [ref=e59] [cursor=pointer]: Email Trigger
-                    - generic [ref=e60] [cursor=pointer]: Email received trigger
-                - generic [ref=e62] [cursor=pointer]:
-                  - img [ref=e63] [cursor=pointer]
-                  - generic [ref=e66] [cursor=pointer]:
-                    - generic [ref=e67] [cursor=pointer]: Form Submission
-                    - generic [ref=e68] [cursor=pointer]: Form submission trigger
-            - generic [ref=e69]:
-              - heading "actions" [level=4] [ref=e70]
-              - generic [ref=e71]:
-                - generic [ref=e73] [cursor=pointer]:
-                  - img [ref=e74] [cursor=pointer]
-                  - generic [ref=e76] [cursor=pointer]:
-                    - generic [ref=e77] [cursor=pointer]: AI Chat
-                    - generic [ref=e78] [cursor=pointer]: Generate AI response
-                - generic [ref=e80] [cursor=pointer]:
-                  - img [ref=e81] [cursor=pointer]
-                  - generic [ref=e85] [cursor=pointer]:
-                    - generic [ref=e86] [cursor=pointer]: Generate Image
-                    - generic [ref=e87] [cursor=pointer]: Create AI image
-                - generic [ref=e89] [cursor=pointer]:
-                  - img [ref=e90] [cursor=pointer]
-                  - generic [ref=e94] [cursor=pointer]:
-                    - generic [ref=e95] [cursor=pointer]: Generate Music
-                    - generic [ref=e96] [cursor=pointer]: Create AI music
-                - generic [ref=e98] [cursor=pointer]:
-                  - img [ref=e99] [cursor=pointer]
-                  - generic [ref=e103] [cursor=pointer]:
-                    - generic [ref=e104] [cursor=pointer]: Call Webhook
-                    - generic [ref=e105] [cursor=pointer]: Make HTTP request
-                - generic [ref=e107] [cursor=pointer]:
-                  - img [ref=e108] [cursor=pointer]
-                  - generic [ref=e111] [cursor=pointer]:
-                    - generic [ref=e112] [cursor=pointer]: Send Email
-                    - generic [ref=e113] [cursor=pointer]: Send email notification
-                - generic [ref=e115] [cursor=pointer]:
-                  - img [ref=e116] [cursor=pointer]
-                  - generic [ref=e120] [cursor=pointer]:
-                    - generic [ref=e121] [cursor=pointer]: Database Query
-                    - generic [ref=e122] [cursor=pointer]: Query database
-            - generic [ref=e123]:
-              - heading "conditions" [level=4] [ref=e124]
+  - generic [active]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - navigation [ref=e7]:
+          - button "previous" [disabled] [ref=e8]:
+            - img "previous" [ref=e9]
+          - generic [ref=e11]:
+            - generic [ref=e12]: 1/
+            - generic [ref=e13]: "1"
+          - button "next" [disabled] [ref=e14]:
+            - img "next" [ref=e15]
+        - generic [ref=e18]:
+          - img [ref=e19]
+          - generic "Latest available version is detected (15.5.3)." [ref=e21]: Next.js 15.5.3
+          - generic [ref=e22]: Turbopack
+      - dialog "Runtime Error" [ref=e24]:
+        - generic [ref=e27]:
+          - generic [ref=e28]:
+            - generic [ref=e29]:
+              - generic [ref=e31]: Runtime Error
+              - generic [ref=e32]:
+                - button "Copy Error Info" [ref=e33] [cursor=pointer]:
+                  - img [ref=e34] [cursor=pointer]
+                - button "No related documentation found" [disabled] [ref=e36]:
+                  - img [ref=e37]
+                - link "Learn more about enabling Node.js inspector for server code with Chrome DevTools" [ref=e39] [cursor=pointer]:
+                  - /url: https://nextjs.org/docs/app/building-your-application/configuring/debugging#server-side-code
+                  - img [ref=e40] [cursor=pointer]
+            - paragraph [ref=e49]: SUPABASE_SERVICE_ROLE_KEY is required
+          - generic [ref=e50]:
+            - generic [ref=e51]:
+              - paragraph [ref=e53]:
+                - img [ref=e55]
+                - generic [ref=e59]: lib/database.ts (59:13) @ new DatabaseService
+                - button "Open in editor" [ref=e60] [cursor=pointer]:
+                  - img [ref=e62] [cursor=pointer]
+              - generic [ref=e65]:
+                - generic [ref=e68]: 57 |
+                - generic [ref=e69]:
+                  - generic [ref=e71]: 58 |
+                  - generic [ref=e73]: if
+                  - generic [ref=e74]: (
+                  - generic [ref=e75]: "!"
+                  - generic [ref=e76]: "supabaseKey) {"
+                - generic [ref=e77]:
+                  - generic [ref=e78]: ">"
+                  - generic [ref=e79]: 59 |
+                  - generic [ref=e81]: throw
+                  - generic [ref=e83]: new
+                  - generic [ref=e85]: Error
+                  - generic [ref=e86]: (
+                  - generic [ref=e87]: "'SUPABASE_SERVICE_ROLE_KEY is required'"
+                  - generic [ref=e88]: )
+                - generic [ref=e89]:
+                  - generic [ref=e91]: "|"
+                  - generic [ref=e93]: ^
+                - generic [ref=e94]:
+                  - generic [ref=e96]: 60 |
+                  - generic [ref=e97]: "}"
+                - generic [ref=e100]: 61 |
+                - generic [ref=e101]:
+                  - generic [ref=e103]: 62 |
+                  - generic [ref=e105]: this
+                  - generic [ref=e106]: .
+                  - generic [ref=e107]: supabase
+                  - generic [ref=e108]: =
+                  - generic [ref=e109]: createClient(supabaseUrl
+                  - generic [ref=e110]: ","
+                  - generic [ref=e111]: supabaseKey)
+            - generic [ref=e112]:
+              - generic [ref=e113]:
+                - paragraph [ref=e114]:
+                  - text: Call Stack
+                  - generic [ref=e115]: "29"
+                - button "Show 24 ignore-listed frame(s)" [ref=e116] [cursor=pointer]:
+                  - text: Show 24 ignore-listed frame(s)
+                  - img [ref=e117] [cursor=pointer]
+              - generic [ref=e119]:
+                - generic [ref=e120]:
+                  - text: new DatabaseService
+                  - button "Open new DatabaseService in editor" [ref=e121] [cursor=pointer]:
+                    - img [ref=e122] [cursor=pointer]
+                - generic [ref=e124]: lib/database.ts (59:13)
               - generic [ref=e125]:
-                - generic [ref=e127] [cursor=pointer]:
-                  - img [ref=e128] [cursor=pointer]
-                  - generic [ref=e131] [cursor=pointer]:
-                    - generic [ref=e132] [cursor=pointer]: If/Else
-                    - generic [ref=e133] [cursor=pointer]: Conditional logic
-                - generic [ref=e135] [cursor=pointer]:
-                  - img [ref=e136] [cursor=pointer]
-                  - generic [ref=e139] [cursor=pointer]:
-                    - generic [ref=e140] [cursor=pointer]: Switch
-                    - generic [ref=e141] [cursor=pointer]: Multi-condition switch
-            - generic [ref=e142]:
-              - heading "outputs" [level=4] [ref=e143]
-              - generic [ref=e144]:
-                - generic [ref=e146] [cursor=pointer]:
-                  - img [ref=e147] [cursor=pointer]
-                  - generic [ref=e149] [cursor=pointer]:
-                    - generic [ref=e150] [cursor=pointer]: API Response
-                    - generic [ref=e151] [cursor=pointer]: Return API response
-                - generic [ref=e153] [cursor=pointer]:
-                  - img [ref=e154] [cursor=pointer]
-                  - generic [ref=e157] [cursor=pointer]:
-                    - generic [ref=e158] [cursor=pointer]: Save File
-                    - generic [ref=e159] [cursor=pointer]: Save to file
-                - generic [ref=e161] [cursor=pointer]:
-                  - img [ref=e162] [cursor=pointer]
-                  - generic [ref=e164] [cursor=pointer]:
-                    - generic [ref=e165] [cursor=pointer]: Notification
-                    - generic [ref=e166] [cursor=pointer]: Send notification
-        - generic [ref=e168]:
-          - generic [ref=e169]:
-            - generic [ref=e170]: Workflow Canvas
-            - generic [ref=e171]: 0 nodes • 0 connections
-          - generic:
-            - generic:
-              - img
-        - generic [ref=e173]:
-          - generic [ref=e174]:
-            - generic [ref=e175]: Properties
-            - generic [ref=e176]: Select a node to configure
-          - generic [ref=e178]:
-            - img [ref=e179]
-            - paragraph [ref=e182]: No node selected
-  - button "Open Next.js Dev Tools" [ref=e188] [cursor=pointer]:
-    - img [ref=e189] [cursor=pointer]
-  - alert [ref=e192]
+                - generic [ref=e126]:
+                  - generic [ref=e127]: "{module evaluation}"
+                  - button "Open __TURBOPACK__module__evaluation__ in editor" [ref=e128] [cursor=pointer]:
+                    - img [ref=e129] [cursor=pointer]
+                - generic [ref=e131]: lib/database.ts (268:32)
+              - generic [ref=e132]:
+                - generic [ref=e133]:
+                  - generic [ref=e134]: "{module evaluation}"
+                  - button "Open __TURBOPACK__module__evaluation__ in editor" [ref=e135] [cursor=pointer]:
+                    - img [ref=e136] [cursor=pointer]
+                - generic [ref=e138]: components/content/home-content.tsx (19:1)
+              - generic [ref=e139]:
+                - generic [ref=e140]:
+                  - generic [ref=e141]: "{module evaluation}"
+                  - button "Open __TURBOPACK__module__evaluation__ in editor" [ref=e142] [cursor=pointer]:
+                    - img [ref=e143] [cursor=pointer]
+                - generic [ref=e145]: components/content/index.tsx (4:1)
+              - generic [ref=e146]:
+                - generic [ref=e147]:
+                  - generic [ref=e148]: "{module evaluation}"
+                  - button "Open __TURBOPACK__module__evaluation__ in editor" [ref=e149] [cursor=pointer]:
+                    - img [ref=e150] [cursor=pointer]
+                - generic [ref=e152]: app/page.tsx (19:1)
+        - generic [ref=e153]:
+          - generic [ref=e154]: "1"
+          - generic [ref=e155]: "2"
+    - generic [ref=e160] [cursor=pointer]:
+      - button "Open Next.js Dev Tools" [ref=e161] [cursor=pointer]:
+        - img [ref=e162] [cursor=pointer]
+      - generic [ref=e165] [cursor=pointer]:
+        - button "Open issues overlay" [ref=e166] [cursor=pointer]:
+          - generic [ref=e167] [cursor=pointer]:
+            - generic [ref=e168] [cursor=pointer]: "0"
+            - generic [ref=e169] [cursor=pointer]: "1"
+          - generic [ref=e170] [cursor=pointer]: Issue
+        - button "Collapse issues badge" [ref=e171] [cursor=pointer]:
+          - img [ref=e172] [cursor=pointer]
+  - 'heading "Application error: a client-side exception has occurred while loading localhost (see the browser console for more information)." [level=2] [ref=e176]'
 ```

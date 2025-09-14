@@ -16,8 +16,6 @@ import {
   ArrowRight,
   Activity
 } from "lucide-react"
-import { DatabaseService } from "@/lib/database"
-import { AuthService } from "@/lib/auth"
 
 interface UserStats {
   conversations_count?: number
@@ -66,79 +64,16 @@ export function HomeContent() {
 
   const loadDashboardData = async () => {
     try {
-      const authService = new AuthService()
-      const databaseService = new DatabaseService()
-      const user = await authService.getCurrentUser()
-
-      if (user) {
-        // Load user's recent activity and stats
-        const [conversations, generations] = await Promise.all([
-          databaseService.getUserConversations(user.id, 5),
-          databaseService.getUserGenerations(user.id, undefined, 5)
-        ])
-
-        // Transform data for display
-        const activities: RecentActivity[] = []
-
-        conversations.forEach((conv: Conversation) => {
-          activities.push({
-            id: conv.id,
-            type: 'chat',
-            title: `Chat with ${conv.model || 'AI'}`,
-            timestamp: new Date(conv.created_at),
-            status: 'completed'
-          })
-        })
-
-        generations.forEach((gen: Generation) => {
-          activities.push({
-            id: gen.id,
-            type: gen.type === 'image' ? 'image' : gen.type === 'music' ? 'music' : 'character',
-            title: gen.prompt?.substring(0, 50) + '...' || 'Generated content',
-            timestamp: new Date(gen.created_at),
-            status: (gen.status === 'completed' || gen.status === 'processing' || gen.status === 'failed') ? gen.status : 'completed'
-          })
-        })
-
-        // Sort by timestamp and take latest 5
-        activities.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-        setRecentActivity(activities.slice(0, 5))
-
-        // Load user stats
-        const stats = await databaseService.getStats(user.id)
-        setUserStats({
-          conversations_count: stats.conversations,
-          images_count: stats.generations, // Assuming generations include images
-          characters_count: 0, // Will need to add this to database
-          api_calls_count: stats.totalUsage
-        })
+      const response = await fetch('/api/dashboard')
+      if (response.ok) {
+        const data = await response.json()
+        setRecentActivity(data.activities || [])
+        setUserStats(data.stats || null)
+      } else {
+        console.error('Failed to load dashboard data')
       }
     } catch (error) {
-      console.error('Failed to load dashboard data:', error)
-      // Fallback to mock data
-      setRecentActivity([
-        {
-          id: '1',
-          type: 'chat',
-          title: 'Chat with GPT-4 about React development',
-          timestamp: new Date(Date.now() - 1000 * 60 * 30),
-          status: 'completed'
-        },
-        {
-          id: '2',
-          type: 'image',
-          title: 'Generated futuristic cityscape',
-          timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
-          status: 'completed'
-        },
-        {
-          id: '3',
-          type: 'character',
-          title: 'Created "Tech Mentor" character',
-          timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4),
-          status: 'completed'
-        }
-      ])
+      console.error('Error loading dashboard data:', error)
     } finally {
       setIsLoading(false)
     }

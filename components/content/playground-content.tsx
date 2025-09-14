@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -9,7 +9,6 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Send, Plus, Trash2, Bot, User } from "lucide-react"
-import { AIChatService, ChatMessage } from "@/lib/ai-chat"
 
 interface Message {
   id: string
@@ -27,7 +26,11 @@ interface PlaygroundSession {
   isActive: boolean
 }
 
-const availableModels = AIChatService.getAvailableModels()
+const DEFAULT_MODELS = [
+  { id: "gpt-4", name: "GPT-4" },
+  { id: "claude-3-opus", name: "Claude 3 Opus" },
+  { id: "gemini-pro", name: "Gemini Pro" }
+]
 
 export function PlaygroundContent() {
   const [chatSessions, setChatSessions] = useState<PlaygroundSession[]>([
@@ -47,9 +50,30 @@ export function PlaygroundContent() {
       isActive: true
     }
   ])
+  const [availableModels, setAvailableModels] = useState(DEFAULT_MODELS)
   const [activeTab, setActiveTab] = useState("1")
   const [inputMessage, setInputMessage] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    loadModels()
+  }, [])
+
+  const loadModels = async () => {
+    try {
+      const response = await fetch('/api/models')
+      if (response.ok) {
+        const data = await response.json()
+        setAvailableModels(data.models?.map((model: any) => ({
+          id: model.id,
+          name: model.name
+        })) || DEFAULT_MODELS)
+      }
+    } catch (error) {
+      console.error('Failed to load models:', error)
+      // Keep default models on error
+    }
+  }
 
   const activeSession = chatSessions.find(session => session.id === activeTab)
 
@@ -117,30 +141,33 @@ export function PlaygroundContent() {
     setIsLoading(true)
 
     try {
-      // Convert messages to ChatMessage format for the AI service
-      const chatMessages: ChatMessage[] = activeSession.messages.map(msg => ({
-        role: msg.role,
-        content: msg.content
-      }));
+      // Make API call to chat endpoint
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: activeSession.messages.map(msg => ({
+            role: msg.role,
+            content: msg.content
+          })),
+          model: activeSession.model,
+          userMessage: inputMessage,
+          temperature: 0.7
+        })
+      })
 
-      // Add the new user message
-      chatMessages.push({ role: 'user', content: inputMessage });
+      if (!response.ok) {
+        throw new Error('Failed to get AI response')
+      }
 
-      // Create session object for AI service
-      const aiSession = {
-        id: activeSession.id,
-        messages: chatMessages,
-        model: activeSession.model,
-        temperature: 0.7
-      };
-
-      // Get AI response
-      const aiResponseContent = await AIChatService.sendMessage(aiSession, inputMessage);
+      const data = await response.json()
 
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: aiResponseContent,
+        content: data.response,
         timestamp: new Date(),
         model: activeSession.model
       }

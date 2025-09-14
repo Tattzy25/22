@@ -1,13 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
-import { Search, Bot, Zap, Star, ExternalLink } from "lucide-react"
+import { Search, Bot, Zap, Star, ExternalLink, Loader2 } from "lucide-react"
 
 interface AIModel {
   id: string
@@ -15,100 +15,85 @@ interface AIModel {
   provider: string
   description: string
   capabilities: string[]
-  pricing: string
+  pricing: {
+    inputTokens: string
+    outputTokens: string
+    monthlyFee?: string
+  }
   rating: number
-  image: string
-  contextWindow: string
+  contextWindow: number
   responseTime: string
+  status: 'available' | 'beta' | 'deprecated'
+  icon: string
 }
 
-const models: AIModel[] = [
-  {
-    id: "gpt-4",
-    name: "GPT-4",
-    provider: "OpenAI",
-    description: "Most advanced GPT model with superior reasoning and creativity",
-    capabilities: ["Text Generation", "Code", "Analysis", "Creative Writing"],
-    pricing: "$0.03/1K tokens",
-    rating: 4.9,
-    image: "🤖",
-    contextWindow: "128K tokens",
-    responseTime: "~2-3s"
-  },
-  {
-    id: "claude-3-opus",
-    name: "Claude 3 Opus",
-    provider: "Anthropic",
-    description: "Most capable Claude model for complex tasks",
-    capabilities: ["Analysis", "Research", "Long-form Content", "Math"],
-    pricing: "$0.015/1K tokens",
-    rating: 4.8,
-    image: "🧠",
-    contextWindow: "200K tokens",
-    responseTime: "~1-2s"
-  },
-  {
-    id: "gemini-pro",
-    name: "Gemini Pro",
-    provider: "Google",
-    description: "Multimodal AI with text and image understanding",
-    capabilities: ["Multimodal", "Code", "Translation", "Analysis"],
-    pricing: "$0.001/1K chars",
-    rating: 4.7,
-    image: "🌟",
-    contextWindow: "32K tokens",
-    responseTime: "~1-2s"
-  },
-  {
-    id: "claude-3-haiku",
-    name: "Claude 3 Haiku",
-    provider: "Anthropic",
-    description: "Fast and efficient for everyday tasks",
-    capabilities: ["Chat", "Writing", "Analysis", "Coding"],
-    pricing: "$0.00025/1K tokens",
-    rating: 4.6,
-    image: "⚡",
-    contextWindow: "200K tokens",
-    responseTime: "~0.5-1s"
-  },
-  {
-    id: "gpt-3.5-turbo",
-    name: "GPT-3.5 Turbo",
-    provider: "OpenAI",
-    description: "Fast and cost-effective for most use cases",
-    capabilities: ["Chat", "Writing", "Analysis", "Code"],
-    pricing: "$0.002/1K tokens",
-    rating: 4.5,
-    image: "🚀",
-    contextWindow: "16K tokens",
-    responseTime: "~0.5-1s"
-  },
-  {
-    id: "command-r",
-    name: "Command R",
-    provider: "Cohere",
-    description: "Enterprise-focused AI with strong reasoning",
-    capabilities: ["Business", "Analysis", "Research", "Automation"],
-    pricing: "$0.002/1K tokens",
-    rating: 4.4,
-    image: "🏢",
-    contextWindow: "128K tokens",
-    responseTime: "~1-2s"
-  }
-]
-
 export function ModelsContent() {
+  const [models, setModels] = useState<AIModel[]>([])
+  const [providers, setProviders] = useState<string[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedProvider, setSelectedProvider] = useState("all")
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    loadModels()
+  }, [])
+
+  const loadModels = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+      const response = await fetch('/api/models')
+      if (response.ok) {
+        const data = await response.json()
+        setModels(data.models || [])
+        setProviders(['all', ...(data.providers || [])])
+      } else {
+        setError('Failed to load models')
+      }
+    } catch (err) {
+      setError('Failed to load models')
+      console.error('Error loading models:', err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const filteredModels = models.filter(model => {
     const matchesSearch = model.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         model.description.toLowerCase().includes(searchTerm.toLowerCase())
+                         model.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         model.capabilities.some(cap => cap.toLowerCase().includes(searchTerm.toLowerCase()))
     const matchesProvider = selectedProvider === "all" || model.provider.toLowerCase() === selectedProvider
     return matchesSearch && matchesProvider
   })
 
-  const providers = ["all", ...Array.from(new Set(models.map(m => m.provider.toLowerCase())))]
+  if (isLoading) {
+    return (
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <div className="flex items-center justify-center h-64">
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-6 w-6 animate-spin" />
+            <span>Loading AI models...</span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <p className="text-red-500 mb-2">{error}</p>
+            <Button onClick={loadModels} variant="outline">
+              Try Again
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
@@ -158,7 +143,7 @@ export function ModelsContent() {
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="text-2xl">{model.image}</div>
+                  <div className="text-2xl">{model.icon}</div>
                   <div>
                     <CardTitle className="text-lg">{model.name}</CardTitle>
                     <CardDescription className="text-sm">{model.provider}</CardDescription>
@@ -189,7 +174,9 @@ export function ModelsContent() {
               </div>
 
               <div className="flex items-center justify-between text-sm">
-                <span className="font-medium text-green-600">{model.pricing}</span>
+                <span className="font-medium text-green-600">
+                  {model.pricing.inputTokens} in / {model.pricing.outputTokens} out
+                </span>
                 <span className="text-muted-foreground">{model.responseTime}</span>
               </div>
 
@@ -204,7 +191,7 @@ export function ModelsContent() {
                   <DialogContent className="max-w-2xl">
                     <DialogHeader>
                       <DialogTitle className="flex items-center gap-3">
-                        <span className="text-2xl">{model.image}</span>
+                        <span className="text-2xl">{model.icon}</span>
                         {model.name}
                         <Badge variant="secondary">{model.provider}</Badge>
                       </DialogTitle>
@@ -222,7 +209,9 @@ export function ModelsContent() {
                         </div>
                         <div>
                           <span className="font-medium">Pricing:</span>
-                          <p className="text-green-600 font-medium">{model.pricing}</p>
+                          <p className="text-green-600 font-medium">
+                            {model.pricing.inputTokens} input / {model.pricing.outputTokens} output
+                          </p>
                         </div>
                         <div>
                           <span className="font-medium">Rating:</span>

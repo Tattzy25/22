@@ -1,258 +1,131 @@
 # Page snapshot
 
 ```yaml
-- generic [active] [ref=e1]:
-  - generic [ref=e2]:
-    - generic [ref=e5]:
-      - list [ref=e7]:
-        - listitem [ref=e8]:
-          - button "Acme Inc Enterprise" [ref=e9]:
-            - img [ref=e11]
-            - generic [ref=e13]:
-              - generic [ref=e14]: Acme Inc
-              - generic [ref=e15]: Enterprise
-            - img [ref=e16]
-      - generic [ref=e19]:
-        - generic [ref=e20]:
-          - generic [ref=e21]: Platform
-          - list [ref=e22]:
-            - listitem [ref=e23]:
-              - button "Dashboard" [expanded] [ref=e24]:
-                - img [ref=e25]
-                - generic [ref=e28]: Dashboard
-                - img [ref=e29]
-              - list [ref=e32]:
-                - listitem [ref=e33]:
-                  - link "Dashboard" [ref=e34]:
-                    - /url: "#home"
-                    - generic [ref=e35]: Dashboard
-                - listitem [ref=e36]:
-                  - link "Analytics" [ref=e37]:
-                    - /url: "#home"
-                    - generic [ref=e38]: Analytics
-                - listitem [ref=e39]:
-                  - link "Activity" [ref=e40]:
-                    - /url: "#home"
-                    - generic [ref=e41]: Activity
-            - listitem [ref=e42]:
-              - button "AI Models" [ref=e43]:
-                - img [ref=e44]
-                - generic [ref=e47]: AI Models
-                - img [ref=e48]
-            - listitem [ref=e50]:
-              - button "Playground" [ref=e51]:
-                - img [ref=e52]
-                - generic [ref=e53]: Playground
-                - img [ref=e54]
-            - listitem [ref=e56]:
-              - button "Content Creation" [ref=e57]:
-                - img [ref=e58]
-                - generic [ref=e60]: Content Creation
-                - img [ref=e61]
-            - listitem [ref=e63]:
-              - button "Automation" [ref=e64]:
-                - img [ref=e65]
-                - generic [ref=e68]: Automation
-                - img [ref=e69]
-            - listitem [ref=e71]:
-              - button "Widget Generator" [ref=e72]:
-                - img [ref=e73]
-                - generic [ref=e74]: Widget Generator
-                - img [ref=e75]
-            - listitem [ref=e77]:
-              - button "Community" [ref=e78]:
-                - img [ref=e79]
-                - generic [ref=e81]: Community
-                - img [ref=e82]
-            - listitem [ref=e84]:
-              - button "Media Studio" [ref=e85]:
-                - img [ref=e86]
-                - generic [ref=e88]: Media Studio
-                - img [ref=e89]
-            - listitem [ref=e91]:
-              - button "Settings" [ref=e92]:
-                - img [ref=e93]
-                - generic [ref=e96]: Settings
-                - img [ref=e97]
-        - generic [ref=e99]:
-          - generic [ref=e100]: Projects
-          - list [ref=e101]:
-            - listitem [ref=e102]:
-              - link "Design Engineering" [ref=e103]:
-                - /url: "#design-engineering"
-                - img [ref=e104]
-                - generic [ref=e105]: Design Engineering
-              - button "More" [ref=e106]:
-                - img [ref=e107]
-                - generic [ref=e111]: More
-            - listitem [ref=e112]:
-              - link "Sales & Marketing" [ref=e113]:
-                - /url: "#sales-marketing"
-                - img [ref=e114]
-                - generic [ref=e117]: Sales & Marketing
-              - button "More" [ref=e118]:
-                - img [ref=e119]
-                - generic [ref=e123]: More
-            - listitem [ref=e124]:
-              - link "Control Panel" [ref=e125]:
-                - /url: "#control-panel"
-                - img [ref=e126]
-                - generic [ref=e128]: Control Panel
-              - button "More" [ref=e129]:
-                - img [ref=e130]
-                - generic [ref=e134]: More
-            - listitem [ref=e135]:
-              - button "More" [ref=e136]:
-                - img [ref=e137]
-                - generic [ref=e141]: More
-      - list [ref=e143]:
-        - listitem [ref=e144]:
-          - button "CN shadcn m@example.com" [ref=e145]:
-            - generic [ref=e147]: CN
-            - generic [ref=e148]:
-              - generic [ref=e149]: shadcn
-              - generic [ref=e150]: m@example.com
-            - img [ref=e151]
-      - button "Toggle Sidebar" [ref=e154]
-    - main [ref=e155]:
-      - generic [ref=e157]:
-        - button "Toggle Sidebar" [ref=e158]:
+- generic [ref=e1]:
+  - generic [active]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - navigation [ref=e7]:
+            - button "previous" [disabled] [ref=e8]:
+              - img "previous" [ref=e9]
+            - generic [ref=e11]:
+              - generic [ref=e12]: 1/
+              - generic [ref=e13]: "1"
+            - button "next" [disabled] [ref=e14]:
+              - img "next" [ref=e15]
           - img
-          - generic [ref=e159]: Toggle Sidebar
-        - navigation "breadcrumb" [ref=e160]:
-          - list [ref=e161]:
-            - listitem [ref=e162]:
-              - link "Home" [ref=e163]:
-                - /url: "#home"
-            - listitem [ref=e164]:
-              - img [ref=e165]
-            - listitem [ref=e167]:
-              - link "Automation" [disabled] [ref=e168]
-      - generic [ref=e169]:
-        - generic [ref=e170]:
-          - generic [ref=e171]:
-            - generic [ref=e172]:
-              - heading "Automation Builder" [level=2] [ref=e173]
-              - paragraph [ref=e174]: Create AI workflows with drag-and-drop automation
-            - textbox "Automation name" [ref=e175]: Test Automation
-          - generic [ref=e176]:
-            - button "Save" [ref=e177]:
-              - img
-              - text: Save
-            - button "Run" [ref=e178]:
-              - img
-              - text: Run
-        - generic [ref=e179]: Last saved at 9:02:04 AM
-        - generic [ref=e180]:
-          - generic [ref=e182]:
-            - generic [ref=e183]:
-              - generic [ref=e184]:
-                - img [ref=e185]
-                - text: Components
-              - generic [ref=e186]: Drag components to build your automation
-            - generic [ref=e191]:
-              - generic [ref=e192]:
-                - heading "triggers" [level=4] [ref=e193]
-                - generic [ref=e194]:
-                  - generic [ref=e196] [cursor=pointer]:
-                    - img [ref=e197] [cursor=pointer]
-                    - generic [ref=e201] [cursor=pointer]:
-                      - generic [ref=e202] [cursor=pointer]: Webhook Trigger
-                      - generic [ref=e203] [cursor=pointer]: HTTP webhook trigger
-                  - generic [ref=e205] [cursor=pointer]:
-                    - img [ref=e206] [cursor=pointer]
-                    - generic [ref=e208] [cursor=pointer]:
-                      - generic [ref=e209] [cursor=pointer]: Schedule Trigger
-                      - generic [ref=e210] [cursor=pointer]: Time-based trigger
-                  - generic [ref=e212] [cursor=pointer]:
-                    - img [ref=e213] [cursor=pointer]
-                    - generic [ref=e216] [cursor=pointer]:
-                      - generic [ref=e217] [cursor=pointer]: Email Trigger
-                      - generic [ref=e218] [cursor=pointer]: Email received trigger
-                  - generic [ref=e220] [cursor=pointer]:
-                    - img [ref=e221] [cursor=pointer]
-                    - generic [ref=e224] [cursor=pointer]:
-                      - generic [ref=e225] [cursor=pointer]: Form Submission
-                      - generic [ref=e226] [cursor=pointer]: Form submission trigger
-              - generic [ref=e227]:
-                - heading "actions" [level=4] [ref=e228]
-                - generic [ref=e229]:
-                  - generic [ref=e231] [cursor=pointer]:
-                    - img [ref=e232] [cursor=pointer]
-                    - generic [ref=e234] [cursor=pointer]:
-                      - generic [ref=e235] [cursor=pointer]: AI Chat
-                      - generic [ref=e236] [cursor=pointer]: Generate AI response
-                  - generic [ref=e238] [cursor=pointer]:
-                    - img [ref=e239] [cursor=pointer]
-                    - generic [ref=e243] [cursor=pointer]:
-                      - generic [ref=e244] [cursor=pointer]: Generate Image
-                      - generic [ref=e245] [cursor=pointer]: Create AI image
-                  - generic [ref=e247] [cursor=pointer]:
-                    - img [ref=e248] [cursor=pointer]
-                    - generic [ref=e252] [cursor=pointer]:
-                      - generic [ref=e253] [cursor=pointer]: Generate Music
-                      - generic [ref=e254] [cursor=pointer]: Create AI music
-                  - generic [ref=e256] [cursor=pointer]:
-                    - img [ref=e257] [cursor=pointer]
-                    - generic [ref=e261] [cursor=pointer]:
-                      - generic [ref=e262] [cursor=pointer]: Call Webhook
-                      - generic [ref=e263] [cursor=pointer]: Make HTTP request
-                  - generic [ref=e265] [cursor=pointer]:
-                    - img [ref=e266] [cursor=pointer]
-                    - generic [ref=e269] [cursor=pointer]:
-                      - generic [ref=e270] [cursor=pointer]: Send Email
-                      - generic [ref=e271] [cursor=pointer]: Send email notification
-                  - generic [ref=e273] [cursor=pointer]:
-                    - img [ref=e274] [cursor=pointer]
-                    - generic [ref=e278] [cursor=pointer]:
-                      - generic [ref=e279] [cursor=pointer]: Database Query
-                      - generic [ref=e280] [cursor=pointer]: Query database
-              - generic [ref=e281]:
-                - heading "conditions" [level=4] [ref=e282]
-                - generic [ref=e283]:
-                  - generic [ref=e285] [cursor=pointer]:
-                    - img [ref=e286] [cursor=pointer]
-                    - generic [ref=e289] [cursor=pointer]:
-                      - generic [ref=e290] [cursor=pointer]: If/Else
-                      - generic [ref=e291] [cursor=pointer]: Conditional logic
-                  - generic [ref=e293] [cursor=pointer]:
-                    - img [ref=e294] [cursor=pointer]
-                    - generic [ref=e297] [cursor=pointer]:
-                      - generic [ref=e298] [cursor=pointer]: Switch
-                      - generic [ref=e299] [cursor=pointer]: Multi-condition switch
-              - generic [ref=e300]:
-                - heading "outputs" [level=4] [ref=e301]
-                - generic [ref=e302]:
-                  - generic [ref=e304] [cursor=pointer]:
-                    - img [ref=e305] [cursor=pointer]
-                    - generic [ref=e307] [cursor=pointer]:
-                      - generic [ref=e308] [cursor=pointer]: API Response
-                      - generic [ref=e309] [cursor=pointer]: Return API response
-                  - generic [ref=e311] [cursor=pointer]:
-                    - img [ref=e312] [cursor=pointer]
-                    - generic [ref=e315] [cursor=pointer]:
-                      - generic [ref=e316] [cursor=pointer]: Save File
-                      - generic [ref=e317] [cursor=pointer]: Save to file
-                  - generic [ref=e319] [cursor=pointer]:
-                    - img [ref=e320] [cursor=pointer]
-                    - generic [ref=e322] [cursor=pointer]:
-                      - generic [ref=e323] [cursor=pointer]: Notification
-                      - generic [ref=e324] [cursor=pointer]: Send notification
-          - generic [ref=e326]:
-            - generic [ref=e327]:
-              - generic [ref=e328]: Workflow Canvas
-              - generic [ref=e329]: 0 nodes • 0 connections
-            - generic:
-              - generic:
-                - img
-          - generic [ref=e331]:
-            - generic [ref=e332]:
-              - generic [ref=e333]: Properties
-              - generic [ref=e334]: Select a node to configure
-            - generic [ref=e336]:
-              - img [ref=e337]
-              - paragraph [ref=e340]: No node selected
-  - button "Open Next.js Dev Tools" [ref=e346] [cursor=pointer]:
-    - img [ref=e347] [cursor=pointer]
-  - alert [ref=e352]
+        - generic [ref=e17]:
+          - generic [ref=e18]:
+            - img [ref=e19]
+            - generic "Latest available version is detected (15.5.3)." [ref=e21]: Next.js 15.5.3
+            - generic [ref=e22]: Turbopack
+          - img
+      - dialog "Runtime Error" [ref=e24]:
+        - generic [ref=e27]:
+          - generic [ref=e28]:
+            - generic [ref=e29]:
+              - generic [ref=e31]: Runtime Error
+              - generic [ref=e32]:
+                - button "Copy Error Info" [ref=e33] [cursor=pointer]:
+                  - img [ref=e34] [cursor=pointer]
+                - button "No related documentation found" [disabled] [ref=e36]:
+                  - img [ref=e37]
+                - link "Learn more about enabling Node.js inspector for server code with Chrome DevTools" [ref=e39]:
+                  - /url: https://nextjs.org/docs/app/building-your-application/configuring/debugging#server-side-code
+                  - img [ref=e40]
+            - paragraph [ref=e52]: SUPABASE_SERVICE_ROLE_KEY is required
+          - generic [ref=e53]:
+            - generic [ref=e54]:
+              - paragraph [ref=e56]:
+                - img [ref=e58]
+                - generic [ref=e62]: lib/database.ts (59:17) @ DatabaseService
+                - button "Open in editor" [ref=e63] [cursor=pointer]:
+                  - img [ref=e65] [cursor=pointer]
+              - generic [ref=e68]:
+                - generic [ref=e71]: 57 |
+                - generic [ref=e72]:
+                  - generic [ref=e74]: 58 |
+                  - generic [ref=e76]: if
+                  - generic [ref=e77]: (
+                  - generic [ref=e78]: "!"
+                  - generic [ref=e79]: "supabaseKey) {"
+                - generic [ref=e80]:
+                  - generic [ref=e81]: ">"
+                  - generic [ref=e82]: 59 |
+                  - generic [ref=e84]: throw
+                  - generic [ref=e86]: new
+                  - generic [ref=e88]: Error
+                  - generic [ref=e89]: (
+                  - generic [ref=e90]: "'SUPABASE_SERVICE_ROLE_KEY is required'"
+                  - generic [ref=e91]: )
+                - generic [ref=e92]:
+                  - generic [ref=e94]: "|"
+                  - generic [ref=e96]: ^
+                - generic [ref=e97]:
+                  - generic [ref=e99]: 60 |
+                  - generic [ref=e100]: "}"
+                - generic [ref=e103]: 61 |
+                - generic [ref=e104]:
+                  - generic [ref=e106]: 62 |
+                  - generic [ref=e108]: this
+                  - generic [ref=e109]: .
+                  - generic [ref=e110]: supabase
+                  - generic [ref=e111]: =
+                  - generic [ref=e112]: createClient(supabaseUrl
+                  - generic [ref=e113]: ","
+                  - generic [ref=e114]: supabaseKey)
+            - generic [ref=e115]:
+              - generic [ref=e116]:
+                - paragraph [ref=e117]:
+                  - text: Call Stack
+                  - generic [ref=e118]: "28"
+                - button "Show 23 ignore-listed frame(s)" [ref=e119] [cursor=pointer]:
+                  - text: Show 23 ignore-listed frame(s)
+                  - img [ref=e120] [cursor=pointer]
+              - generic [ref=e122]:
+                - generic [ref=e123]:
+                  - text: DatabaseService
+                  - button "Open DatabaseService in editor" [ref=e124] [cursor=pointer]:
+                    - img [ref=e125] [cursor=pointer]
+                - generic [ref=e127]: lib/database.ts (59:17)
+              - generic [ref=e128]:
+                - generic [ref=e129]:
+                  - text: <unknown>
+                  - button "Open <unknown> in editor" [ref=e130] [cursor=pointer]:
+                    - img [ref=e131] [cursor=pointer]
+                - generic [ref=e133]: lib/database.ts (268:36)
+              - generic [ref=e134]:
+                - generic [ref=e135]:
+                  - text: <unknown>
+                  - button "Open <unknown> in editor" [ref=e136] [cursor=pointer]:
+                    - img [ref=e137] [cursor=pointer]
+                - generic [ref=e139]: components/content/home-content.tsx (19:1)
+              - generic [ref=e140]:
+                - generic [ref=e141]:
+                  - text: <unknown>
+                  - button "Open <unknown> in editor" [ref=e142] [cursor=pointer]:
+                    - img [ref=e143] [cursor=pointer]
+                - generic [ref=e145]: components/content/index.tsx (4:1)
+              - generic [ref=e146]:
+                - generic [ref=e147]:
+                  - text: <unknown>
+                  - button "Open <unknown> in editor" [ref=e148] [cursor=pointer]:
+                    - img [ref=e149] [cursor=pointer]
+                - generic [ref=e151]: app/page.tsx (19:1)
+        - generic [ref=e152]:
+          - generic [ref=e153]: "1"
+          - generic [ref=e154]: "2"
+    - generic [ref=e159] [cursor=pointer]:
+      - button "Open Next.js Dev Tools" [ref=e160] [cursor=pointer]:
+        - img [ref=e161] [cursor=pointer]
+      - generic [ref=e166] [cursor=pointer]:
+        - button "Open issues overlay" [ref=e167] [cursor=pointer]:
+          - generic [ref=e168] [cursor=pointer]:
+            - generic [ref=e169] [cursor=pointer]: "0"
+            - generic [ref=e170] [cursor=pointer]: "1"
+          - generic [ref=e171] [cursor=pointer]: Issue
+        - button "Collapse issues badge" [ref=e172] [cursor=pointer]:
+          - img [ref=e173] [cursor=pointer]
+  - 'heading "Application error: a client-side exception has occurred while loading localhost (see the browser console for more information)." [level=2] [ref=e177]'
 ```
