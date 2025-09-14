@@ -77,7 +77,7 @@ const data = {
       icon: Bot,
       items: [
         {
-          title: "Marketplace",
+          title: "All Models",
           url: "#models",
         },
         {
@@ -239,6 +239,11 @@ const data = {
       name: "Control Panel",
       url: "#control-panel",
       icon: Map,
+    },
+    {
+      name: "Admin Panel",
+      url: "#admin-panel",
+      icon: Settings2,
     },
   ],
 }

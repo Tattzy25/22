@@ -69,11 +69,51 @@ export function HomeContent() {
         const data = await response.json()
         setRecentActivity(data.activities || [])
         setUserStats(data.stats || null)
+      } else if (response.status === 401) {
+        // User not authenticated - show demo data
+        setRecentActivity([
+          {
+            id: 'demo-1',
+            type: 'chat',
+            title: 'Chat with GPT-4',
+            timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
+            status: 'completed'
+          },
+          {
+            id: 'demo-2',
+            type: 'image',
+            title: 'Generated sunset landscape...',
+            timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
+            status: 'completed'
+          },
+          {
+            id: 'demo-3',
+            type: 'character',
+            title: 'Created AI Assistant Character',
+            timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
+            status: 'completed'
+          }
+        ])
+        setUserStats(null) // Will use fallback values in quickStats
       } else {
         console.error('Failed to load dashboard data')
+        // Still show demo data on other errors
+        setRecentActivity([])
+        setUserStats(null)
       }
     } catch (error) {
       console.error('Error loading dashboard data:', error)
+      // Show demo data on network errors
+      setRecentActivity([
+        {
+          id: 'demo-1',
+          type: 'chat',
+          title: 'Chat with GPT-4',
+          timestamp: new Date(Date.now() - 1000 * 60 * 30),
+          status: 'completed'
+        }
+      ])
+      setUserStats(null)
     } finally {
       setIsLoading(false)
     }

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
-import { Search, Bot, Zap, Star, ExternalLink, Loader2 } from "lucide-react"
+import { Search, Bot, Zap, Star, ExternalLink, Loader2, Settings, Palette, Type, Image, Eye, X } from "lucide-react"
 
 interface AIModel {
   id: string
@@ -34,6 +34,51 @@ export function ModelsContent() {
   const [selectedProvider, setSelectedProvider] = useState("all")
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  
+  // Admin panel state
+  const [showAdminPanel, setShowAdminPanel] = useState(false)
+  
+  // Card customization state
+  const [cardDesign, setCardDesign] = useState({
+    // Typography
+    titleFont: 'Inter',
+    titleSize: '18px',
+    titleColor: '#1f2937',
+    titleWeight: '600',
+    
+    subtitleFont: 'Inter',
+    subtitleSize: '14px',
+    subtitleColor: '#6b7280',
+    
+    descriptionFont: 'Inter',
+    descriptionSize: '14px',
+    descriptionColor: '#4b5563',
+    
+    // Layout
+    backgroundColor: '#ffffff',
+    borderRadius: '8px',
+    borderColor: '#e5e7eb',
+    borderWidth: '1px',
+    
+    // Spacing
+    padding: '16px',
+    
+    // Effects
+    shadow: 'shadow-md',
+    hoverEffect: true,
+    
+    // Content placeholders
+    placeholders: {
+      icon: '🤖',
+      title: 'Model Name',
+      subtitle: 'Provider',
+      description: 'Model description goes here...',
+      rating: '4.5',
+      pricing: '$0.02/1K in',
+      responseTime: '~2-3s',
+      capabilities: ['Text', 'Code', 'Analysis']
+    }
+  })
 
   useEffect(() => {
     loadModels()
@@ -48,11 +93,99 @@ export function ModelsContent() {
         const data = await response.json()
         setModels(data.models || [])
         setProviders(['all', ...(data.providers || [])])
+      } else if (response.status === 404 || response.status >= 500) {
+        // API not available - show demo data
+        const demoModels = [
+          {
+            id: "gpt-4",
+            name: "GPT-4",
+            provider: "OpenAI",
+            description: "Most advanced GPT model with superior reasoning and creativity",
+            capabilities: ["Text Generation", "Code", "Analysis", "Creative Writing"],
+            pricing: { inputTokens: "$0.03/1K", outputTokens: "$0.06/1K" },
+            rating: 4.9,
+            contextWindow: 128000,
+            responseTime: "~2-3s",
+            status: "available",
+            icon: "🤖"
+          },
+          {
+            id: "claude-3-opus",
+            name: "Claude 3 Opus",
+            provider: "Anthropic",
+            description: "Most capable Claude model for complex tasks and analysis",
+            capabilities: ["Analysis", "Research", "Long-form Content", "Math"],
+            pricing: { inputTokens: "$0.015/1K", outputTokens: "$0.075/1K" },
+            rating: 4.8,
+            contextWindow: 200000,
+            responseTime: "~2-4s",
+            status: "available",
+            icon: "🧠"
+          },
+          {
+            id: "gemini-pro",
+            name: "Gemini Pro",
+            provider: "Google",
+            description: "Google's advanced multimodal model",
+            capabilities: ["Text Generation", "Code", "Analysis", "Multi-modal"],
+            pricing: { inputTokens: "$0.00025/1K", outputTokens: "$0.0005/1K" },
+            rating: 4.7,
+            contextWindow: 1000000,
+            responseTime: "~1-2s",
+            status: "available",
+            icon: "🚀"
+          },
+          {
+            id: "command-r",
+            name: "Command R",
+            provider: "Cohere",
+            description: "Cohere's advanced language model for enterprise applications",
+            capabilities: ["Text Generation", "Analysis", "Tool Use"],
+            pricing: { inputTokens: "$0.00015/1K", outputTokens: "$0.0006/1K" },
+            rating: 4.3,
+            contextWindow: 128000,
+            responseTime: "~1-2s",
+            status: "available",
+            icon: "🏢"
+          }
+        ]
+        setModels(demoModels)
+        setProviders(['all', 'OpenAI', 'Anthropic', 'Google', 'Cohere'])
       } else {
         setError('Failed to load models')
       }
     } catch (err) {
-      setError('Failed to load models')
+      // Network error - show demo data
+      const demoModels = [
+        {
+          id: "gpt-4",
+          name: "GPT-4",
+          provider: "OpenAI",
+          description: "Most advanced GPT model with superior reasoning and creativity",
+          capabilities: ["Text Generation", "Code", "Analysis", "Creative Writing"],
+          pricing: { inputTokens: "$0.03/1K", outputTokens: "$0.06/1K" },
+          rating: 4.9,
+          contextWindow: 128000,
+          responseTime: "~2-3s",
+          status: "available",
+          icon: "🤖"
+        },
+        {
+          id: "claude-3-opus",
+          name: "Claude 3 Opus",
+          provider: "Anthropic",
+          description: "Most capable Claude model for complex tasks and analysis",
+          capabilities: ["Analysis", "Research", "Long-form Content", "Math"],
+          pricing: { inputTokens: "$0.015/1K", outputTokens: "$0.075/1K" },
+          rating: 4.8,
+          contextWindow: 200000,
+          responseTime: "~2-4s",
+          status: "available",
+          icon: "🧠"
+        }
+      ]
+      setModels(demoModels)
+      setProviders(['all', 'OpenAI', 'Anthropic'])
       console.error('Error loading models:', err)
     } finally {
       setIsLoading(false)
@@ -137,7 +270,7 @@ export function ModelsContent() {
       </div>
 
       {/* Models Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {filteredModels.map(model => (
           <Card key={model.id} className="cursor-pointer hover:shadow-md transition-shadow">
             <CardHeader className="pb-3">

@@ -18,6 +18,7 @@ import { SalesContent } from "./sales-content"
 import { AgentLiveContent } from "./agent-live-content"
 import { ControlContent } from "./control-content"
 import { MultiAgentContent } from "./multi-agent-content"
+import { AdminPanel } from "./admin-panel"
 
 interface ContentAreaProps {
   activeContent: ContentType
@@ -59,6 +60,8 @@ export function ContentArea({ activeContent }: ContentAreaProps) {
       return <AgentLiveContent />
     case 'multi-agent':
       return <MultiAgentContent />
+    case 'admin-panel':
+      return <AdminPanel />
     default:
       return <HomeContent />
   }
