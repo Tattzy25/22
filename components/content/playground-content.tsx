@@ -1,16 +1,15 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Send, Plus, Trash2, Bot, User, Settings } from "lucide-react"
+import { Send, Plus, Trash2, Bot, User } from "lucide-react"
+import { AIChatService, ChatMessage } from "@/lib/ai-chat"
 
 interface Message {
   id: string
@@ -20,7 +19,7 @@ interface Message {
   model?: string
 }
 
-interface ChatSession {
+interface PlaygroundSession {
   id: string
   name: string
   model: string
@@ -28,17 +27,10 @@ interface ChatSession {
   isActive: boolean
 }
 
-const availableModels = [
-  { id: "gpt-4", name: "GPT-4", provider: "OpenAI", icon: "🤖" },
-  { id: "claude-3-opus", name: "Claude 3 Opus", provider: "Anthropic", icon: "🧠" },
-  { id: "gemini-pro", name: "Gemini Pro", provider: "Google", icon: "🌟" },
-  { id: "claude-3-haiku", name: "Claude 3 Haiku", provider: "Anthropic", icon: "⚡" },
-  { id: "gpt-3.5-turbo", name: "GPT-3.5 Turbo", provider: "OpenAI", icon: "🚀" },
-  { id: "command-r", name: "Command R", provider: "Cohere", icon: "🏢" }
-]
+const availableModels = AIChatService.getAvailableModels()
 
 export function PlaygroundContent() {
-  const [chatSessions, setChatSessions] = useState<ChatSession[]>([
+  const [chatSessions, setChatSessions] = useState<PlaygroundSession[]>([
     {
       id: "1",
       name: "Chat 1",
@@ -62,7 +54,7 @@ export function PlaygroundContent() {
   const activeSession = chatSessions.find(session => session.id === activeTab)
 
   const createNewChat = () => {
-    const newSession: ChatSession = {
+    const newSession: PlaygroundSession = {
       id: Date.now().toString(),
       name: `Chat ${chatSessions.length + 1}`,
       model: "gpt-4",
@@ -124,12 +116,31 @@ export function PlaygroundContent() {
     setInputMessage("")
     setIsLoading(true)
 
-    // Simulate AI response (in real implementation, this would call the AI API)
-    setTimeout(() => {
+    try {
+      // Convert messages to ChatMessage format for the AI service
+      const chatMessages: ChatMessage[] = activeSession.messages.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
+
+      // Add the new user message
+      chatMessages.push({ role: 'user', content: inputMessage });
+
+      // Create session object for AI service
+      const aiSession = {
+        id: activeSession.id,
+        messages: chatMessages,
+        model: activeSession.model,
+        temperature: 0.7
+      };
+
+      // Get AI response
+      const aiResponseContent = await AIChatService.sendMessage(aiSession, inputMessage);
+
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: `This is a simulated response from ${availableModels.find(m => m.id === activeSession.model)?.name}. In the full implementation, this would be a real AI response.`,
+        content: aiResponseContent,
         timestamp: new Date(),
         model: activeSession.model
       }
@@ -137,12 +148,30 @@ export function PlaygroundContent() {
       setChatSessions(sessions =>
         sessions.map(session =>
           session.id === activeSession.id
-            ? { ...session, messages: [...session.messages, aiResponse] }
+            ? { ...session, messages: [...session.messages, userMessage, aiResponse] }
             : session
         )
       )
+    } catch (error) {
+      console.error('Failed to get AI response:', error);
+      const errorResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "Sorry, I encountered an error while processing your message. Please try again.",
+        timestamp: new Date(),
+        model: activeSession.model
+      }
+
+      setChatSessions(sessions =>
+        sessions.map(session =>
+          session.id === activeSession.id
+            ? { ...session, messages: [...session.messages, userMessage, errorResponse] }
+            : session
+        )
+      )
+    } finally {
       setIsLoading(false)
-    }, 1000)
+    }
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -284,8 +313,8 @@ export function PlaygroundContent() {
                     <div className="bg-muted rounded-lg p-3">
                       <div className="flex space-x-1">
                         <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-pulse"></div>
-                        <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                        <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                        <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-pulse [animation-delay:0.2s]"></div>
+                        <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-pulse [animation-delay:0.4s]"></div>
                       </div>
                     </div>
                   </div>

@@ -1,0 +1,141 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - main [ref=e3]:
+    - generic [ref=e5]:
+      - button "Toggle Sidebar" [ref=e6]:
+        - img
+        - generic [ref=e7]: Toggle Sidebar
+      - navigation "breadcrumb" [ref=e8]:
+        - list [ref=e9]:
+          - listitem [ref=e10]:
+            - link "Automation" [disabled] [ref=e11]
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - generic [ref=e15]:
+            - heading "Automation Builder" [level=2] [ref=e16]
+            - paragraph [ref=e17]: Create AI workflows with drag-and-drop automation
+          - textbox "Automation name" [ref=e18]: Test Automation
+        - generic [ref=e19]:
+          - button "Save" [ref=e20]:
+            - img
+            - text: Save
+          - button "Run" [ref=e21]:
+            - img
+            - text: Run
+      - generic [ref=e22]: Last saved at 9:03:02 AM
+      - generic [ref=e23]:
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - generic [ref=e27]:
+              - img [ref=e28]
+              - text: Components
+            - generic [ref=e29]: Drag components to build your automation
+          - generic [ref=e34]:
+            - generic [ref=e35]:
+              - heading "triggers" [level=4] [ref=e36]
+              - generic [ref=e37]:
+                - generic [ref=e39] [cursor=pointer]:
+                  - img [ref=e40] [cursor=pointer]
+                  - generic [ref=e44] [cursor=pointer]:
+                    - generic [ref=e45] [cursor=pointer]: Webhook Trigger
+                    - generic [ref=e46] [cursor=pointer]: HTTP webhook trigger
+                - generic [ref=e48] [cursor=pointer]:
+                  - img [ref=e49] [cursor=pointer]
+                  - generic [ref=e51] [cursor=pointer]:
+                    - generic [ref=e52] [cursor=pointer]: Schedule Trigger
+                    - generic [ref=e53] [cursor=pointer]: Time-based trigger
+                - generic [ref=e55] [cursor=pointer]:
+                  - img [ref=e56] [cursor=pointer]
+                  - generic [ref=e59] [cursor=pointer]:
+                    - generic [ref=e60] [cursor=pointer]: Email Trigger
+                    - generic [ref=e61] [cursor=pointer]: Email received trigger
+                - generic [ref=e63] [cursor=pointer]:
+                  - img [ref=e64] [cursor=pointer]
+                  - generic [ref=e67] [cursor=pointer]:
+                    - generic [ref=e68] [cursor=pointer]: Form Submission
+                    - generic [ref=e69] [cursor=pointer]: Form submission trigger
+            - generic [ref=e70]:
+              - heading "actions" [level=4] [ref=e71]
+              - generic [ref=e72]:
+                - generic [ref=e74] [cursor=pointer]:
+                  - img [ref=e75] [cursor=pointer]
+                  - generic [ref=e77] [cursor=pointer]:
+                    - generic [ref=e78] [cursor=pointer]: AI Chat
+                    - generic [ref=e79] [cursor=pointer]: Generate AI response
+                - generic [ref=e81] [cursor=pointer]:
+                  - img [ref=e82] [cursor=pointer]
+                  - generic [ref=e86] [cursor=pointer]:
+                    - generic [ref=e87] [cursor=pointer]: Generate Image
+                    - generic [ref=e88] [cursor=pointer]: Create AI image
+                - generic [ref=e90] [cursor=pointer]:
+                  - img [ref=e91] [cursor=pointer]
+                  - generic [ref=e95] [cursor=pointer]:
+                    - generic [ref=e96] [cursor=pointer]: Generate Music
+                    - generic [ref=e97] [cursor=pointer]: Create AI music
+                - generic [ref=e99] [cursor=pointer]:
+                  - img [ref=e100] [cursor=pointer]
+                  - generic [ref=e104] [cursor=pointer]:
+                    - generic [ref=e105] [cursor=pointer]: Call Webhook
+                    - generic [ref=e106] [cursor=pointer]: Make HTTP request
+                - generic [ref=e108] [cursor=pointer]:
+                  - img [ref=e109] [cursor=pointer]
+                  - generic [ref=e112] [cursor=pointer]:
+                    - generic [ref=e113] [cursor=pointer]: Send Email
+                    - generic [ref=e114] [cursor=pointer]: Send email notification
+                - generic [ref=e116] [cursor=pointer]:
+                  - img [ref=e117] [cursor=pointer]
+                  - generic [ref=e121] [cursor=pointer]:
+                    - generic [ref=e122] [cursor=pointer]: Database Query
+                    - generic [ref=e123] [cursor=pointer]: Query database
+            - generic [ref=e124]:
+              - heading "conditions" [level=4] [ref=e125]
+              - generic [ref=e126]:
+                - generic [ref=e128] [cursor=pointer]:
+                  - img [ref=e129] [cursor=pointer]
+                  - generic [ref=e132] [cursor=pointer]:
+                    - generic [ref=e133] [cursor=pointer]: If/Else
+                    - generic [ref=e134] [cursor=pointer]: Conditional logic
+                - generic [ref=e136] [cursor=pointer]:
+                  - img [ref=e137] [cursor=pointer]
+                  - generic [ref=e140] [cursor=pointer]:
+                    - generic [ref=e141] [cursor=pointer]: Switch
+                    - generic [ref=e142] [cursor=pointer]: Multi-condition switch
+            - generic [ref=e143]:
+              - heading "outputs" [level=4] [ref=e144]
+              - generic [ref=e145]:
+                - generic [ref=e147] [cursor=pointer]:
+                  - img [ref=e148] [cursor=pointer]
+                  - generic [ref=e150] [cursor=pointer]:
+                    - generic [ref=e151] [cursor=pointer]: API Response
+                    - generic [ref=e152] [cursor=pointer]: Return API response
+                - generic [ref=e154] [cursor=pointer]:
+                  - img [ref=e155] [cursor=pointer]
+                  - generic [ref=e158] [cursor=pointer]:
+                    - generic [ref=e159] [cursor=pointer]: Save File
+                    - generic [ref=e160] [cursor=pointer]: Save to file
+                - generic [ref=e162] [cursor=pointer]:
+                  - img [ref=e163] [cursor=pointer]
+                  - generic [ref=e165] [cursor=pointer]:
+                    - generic [ref=e166] [cursor=pointer]: Notification
+                    - generic [ref=e167] [cursor=pointer]: Send notification
+        - generic [ref=e169]:
+          - generic [ref=e170]:
+            - generic [ref=e171]: Workflow Canvas
+            - generic [ref=e172]: 0 nodes • 0 connections
+          - generic:
+            - generic:
+              - img
+        - generic [ref=e174]:
+          - generic [ref=e175]:
+            - generic [ref=e176]: Properties
+            - generic [ref=e177]: Select a node to configure
+          - generic [ref=e179]:
+            - img [ref=e180]
+            - paragraph [ref=e183]: No node selected
+  - button "Open Next.js Dev Tools" [ref=e189] [cursor=pointer]:
+    - img [ref=e190] [cursor=pointer]
+  - alert [ref=e195]
+```

@@ -1,0 +1,263 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e5]:
+      - list [ref=e7]:
+        - listitem [ref=e8]:
+          - button "Acme Inc Enterprise" [ref=e9]:
+            - img [ref=e11]
+            - generic [ref=e15]:
+              - generic [ref=e16]: Acme Inc
+              - generic [ref=e17]: Enterprise
+            - img [ref=e18]
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - generic [ref=e23]: Platform
+          - list [ref=e24]:
+            - listitem [ref=e25]:
+              - button "Dashboard" [expanded] [ref=e26]:
+                - img [ref=e27]
+                - generic [ref=e31]: Dashboard
+                - img [ref=e32]
+              - list [ref=e35]:
+                - listitem [ref=e36]:
+                  - link "Dashboard" [ref=e37] [cursor=pointer]:
+                    - /url: "#home"
+                    - generic [ref=e38] [cursor=pointer]: Dashboard
+                - listitem [ref=e39]:
+                  - link "Analytics" [ref=e40] [cursor=pointer]:
+                    - /url: "#home"
+                    - generic [ref=e41] [cursor=pointer]: Analytics
+                - listitem [ref=e42]:
+                  - link "Activity" [ref=e43] [cursor=pointer]:
+                    - /url: "#home"
+                    - generic [ref=e44] [cursor=pointer]: Activity
+            - listitem [ref=e45]:
+              - button "AI Models" [ref=e46]:
+                - img [ref=e47]
+                - generic [ref=e54]: AI Models
+                - img [ref=e55]
+            - listitem [ref=e57]:
+              - button "Playground" [ref=e58]:
+                - img [ref=e59]
+                - generic [ref=e64]: Playground
+                - img [ref=e65]
+            - listitem [ref=e67]:
+              - button "Content Creation" [ref=e68]:
+                - img [ref=e69]
+                - generic [ref=e72]: Content Creation
+                - img [ref=e73]
+            - listitem [ref=e75]:
+              - button "Automation" [ref=e76]:
+                - img [ref=e77]
+                - generic [ref=e82]: Automation
+                - img [ref=e83]
+            - listitem [ref=e85]:
+              - button "Widget Generator" [ref=e86]:
+                - img [ref=e87]
+                - generic [ref=e92]: Widget Generator
+                - img [ref=e93]
+            - listitem [ref=e95]:
+              - button "Community" [ref=e96]:
+                - img [ref=e97]
+                - generic [ref=e100]: Community
+                - img [ref=e101]
+            - listitem [ref=e103]:
+              - button "Media Studio" [ref=e104]:
+                - img [ref=e105]
+                - generic [ref=e109]: Media Studio
+                - img [ref=e110]
+            - listitem [ref=e112]:
+              - button "Settings" [ref=e113]:
+                - img [ref=e114]
+                - generic [ref=e119]: Settings
+                - img [ref=e120]
+        - generic [ref=e122]:
+          - generic [ref=e123]: Projects
+          - list [ref=e124]:
+            - listitem [ref=e125]:
+              - link "Design Engineering" [ref=e126] [cursor=pointer]:
+                - /url: "#design-engineering"
+                - img [ref=e127] [cursor=pointer]
+                - generic [ref=e132] [cursor=pointer]: Design Engineering
+              - button "More" [ref=e133]:
+                - img [ref=e134]
+                - generic [ref=e138]: More
+            - listitem [ref=e139]:
+              - link "Sales & Marketing" [ref=e140] [cursor=pointer]:
+                - /url: "#sales-marketing"
+                - img [ref=e141] [cursor=pointer]
+                - generic [ref=e144] [cursor=pointer]: Sales & Marketing
+              - button "More" [ref=e145]:
+                - img [ref=e146]
+                - generic [ref=e150]: More
+            - listitem [ref=e151]:
+              - link "Control Panel" [ref=e152] [cursor=pointer]:
+                - /url: "#control-panel"
+                - img [ref=e153] [cursor=pointer]
+                - generic [ref=e157] [cursor=pointer]: Control Panel
+              - button "More" [ref=e158]:
+                - img [ref=e159]
+                - generic [ref=e163]: More
+            - listitem [ref=e164]:
+              - button "More" [ref=e165]:
+                - img [ref=e166]
+                - generic [ref=e170]: More
+      - list [ref=e172]:
+        - listitem [ref=e173]:
+          - button "CN shadcn m@example.com" [ref=e174]:
+            - generic [ref=e176]: CN
+            - generic [ref=e177]:
+              - generic [ref=e178]: shadcn
+              - generic [ref=e179]: m@example.com
+            - img [ref=e180]
+      - button "Toggle Sidebar" [ref=e183]
+    - main [ref=e184]:
+      - generic [ref=e186]:
+        - button "Toggle Sidebar" [ref=e187]:
+          - img
+          - generic [ref=e188]: Toggle Sidebar
+        - navigation "breadcrumb" [ref=e189]:
+          - list [ref=e190]:
+            - listitem [ref=e191]:
+              - link "Home" [ref=e192] [cursor=pointer]:
+                - /url: "#home"
+            - listitem [ref=e193]:
+              - img [ref=e194]
+            - listitem [ref=e196]:
+              - link "Automation" [disabled] [ref=e197]
+      - generic [ref=e198]:
+        - generic [ref=e199]:
+          - generic [ref=e200]:
+            - generic [ref=e201]:
+              - heading "Automation Builder" [level=2] [ref=e202]
+              - paragraph [ref=e203]: Create AI workflows with drag-and-drop automation
+            - textbox "Automation name" [ref=e204]: New Automation
+          - generic [ref=e205]:
+            - button "Save" [ref=e206]:
+              - img
+              - text: Save
+            - button "Run" [ref=e207]:
+              - img
+              - text: Run
+        - generic [ref=e208]:
+          - generic [ref=e210]:
+            - generic [ref=e211]:
+              - generic [ref=e212]:
+                - img [ref=e213]
+                - text: Components
+              - generic [ref=e216]: Drag components to build your automation
+            - generic [ref=e221]:
+              - generic [ref=e222]:
+                - heading "triggers" [level=4] [ref=e223]
+                - generic [ref=e224]:
+                  - generic [ref=e226] [cursor=pointer]:
+                    - img [ref=e227] [cursor=pointer]
+                    - generic [ref=e231] [cursor=pointer]:
+                      - generic [ref=e232] [cursor=pointer]: Webhook Trigger
+                      - generic [ref=e233] [cursor=pointer]: HTTP webhook trigger
+                  - generic [ref=e235] [cursor=pointer]:
+                    - img [ref=e236] [cursor=pointer]
+                    - generic [ref=e238] [cursor=pointer]:
+                      - generic [ref=e239] [cursor=pointer]: Schedule Trigger
+                      - generic [ref=e240] [cursor=pointer]: Time-based trigger
+                  - generic [ref=e242] [cursor=pointer]:
+                    - img [ref=e243] [cursor=pointer]
+                    - generic [ref=e246] [cursor=pointer]:
+                      - generic [ref=e247] [cursor=pointer]: Email Trigger
+                      - generic [ref=e248] [cursor=pointer]: Email received trigger
+                  - generic [ref=e250] [cursor=pointer]:
+                    - img [ref=e251] [cursor=pointer]
+                    - generic [ref=e257] [cursor=pointer]:
+                      - generic [ref=e258] [cursor=pointer]: Form Submission
+                      - generic [ref=e259] [cursor=pointer]: Form submission trigger
+              - generic [ref=e260]:
+                - heading "actions" [level=4] [ref=e261]
+                - generic [ref=e262]:
+                  - generic [ref=e264] [cursor=pointer]:
+                    - img [ref=e265] [cursor=pointer]
+                    - generic [ref=e267] [cursor=pointer]:
+                      - generic [ref=e268] [cursor=pointer]: AI Chat
+                      - generic [ref=e269] [cursor=pointer]: Generate AI response
+                  - generic [ref=e271] [cursor=pointer]:
+                    - img [ref=e272] [cursor=pointer]
+                    - generic [ref=e276] [cursor=pointer]:
+                      - generic [ref=e277] [cursor=pointer]: Generate Image
+                      - generic [ref=e278] [cursor=pointer]: Create AI image
+                  - generic [ref=e280] [cursor=pointer]:
+                    - img [ref=e281] [cursor=pointer]
+                    - generic [ref=e285] [cursor=pointer]:
+                      - generic [ref=e286] [cursor=pointer]: Generate Music
+                      - generic [ref=e287] [cursor=pointer]: Create AI music
+                  - generic [ref=e289] [cursor=pointer]:
+                    - img [ref=e290] [cursor=pointer]
+                    - generic [ref=e294] [cursor=pointer]:
+                      - generic [ref=e295] [cursor=pointer]: Call Webhook
+                      - generic [ref=e296] [cursor=pointer]: Make HTTP request
+                  - generic [ref=e298] [cursor=pointer]:
+                    - img [ref=e299] [cursor=pointer]
+                    - generic [ref=e302] [cursor=pointer]:
+                      - generic [ref=e303] [cursor=pointer]: Send Email
+                      - generic [ref=e304] [cursor=pointer]: Send email notification
+                  - generic [ref=e306] [cursor=pointer]:
+                    - img [ref=e307] [cursor=pointer]
+                    - generic [ref=e311] [cursor=pointer]:
+                      - generic [ref=e312] [cursor=pointer]: Database Query
+                      - generic [ref=e313] [cursor=pointer]: Query database
+              - generic [ref=e314]:
+                - heading "conditions" [level=4] [ref=e315]
+                - generic [ref=e316]:
+                  - generic [ref=e318] [cursor=pointer]:
+                    - img [ref=e319] [cursor=pointer]
+                    - generic [ref=e322] [cursor=pointer]:
+                      - generic [ref=e323] [cursor=pointer]: If/Else
+                      - generic [ref=e324] [cursor=pointer]: Conditional logic
+                  - generic [ref=e326] [cursor=pointer]:
+                    - img [ref=e327] [cursor=pointer]
+                    - generic [ref=e330] [cursor=pointer]:
+                      - generic [ref=e331] [cursor=pointer]: Switch
+                      - generic [ref=e332] [cursor=pointer]: Multi-condition switch
+              - generic [ref=e333]:
+                - heading "outputs" [level=4] [ref=e334]
+                - generic [ref=e335]:
+                  - generic [ref=e337] [cursor=pointer]:
+                    - img [ref=e338] [cursor=pointer]
+                    - generic [ref=e341] [cursor=pointer]:
+                      - generic [ref=e342] [cursor=pointer]: API Response
+                      - generic [ref=e343] [cursor=pointer]: Return API response
+                  - generic [ref=e345] [cursor=pointer]:
+                    - img [ref=e346] [cursor=pointer]
+                    - generic [ref=e352] [cursor=pointer]:
+                      - generic [ref=e353] [cursor=pointer]: Save File
+                      - generic [ref=e354] [cursor=pointer]: Save to file
+                  - generic [ref=e356] [cursor=pointer]:
+                    - img [ref=e357] [cursor=pointer]
+                    - generic [ref=e359] [cursor=pointer]:
+                      - generic [ref=e360] [cursor=pointer]: Notification
+                      - generic [ref=e361] [cursor=pointer]: Send notification
+          - generic [ref=e363]:
+            - generic [ref=e364]:
+              - generic [ref=e365]: Workflow Canvas
+              - generic [ref=e366]: 1 nodes • 0 connections
+            - generic:
+              - generic:
+                - img
+                - generic [ref=e367]:
+                  - generic [ref=e368]:
+                    - img [ref=e369]
+                    - img [ref=e376]
+                    - generic [ref=e380]: Webhook Trigger
+                  - generic [ref=e381]: trigger
+          - generic [ref=e383]:
+            - generic [ref=e384]:
+              - generic [ref=e385]: Properties
+              - generic [ref=e386]: Select a node to configure
+            - generic [ref=e388]:
+              - img [ref=e389]
+              - paragraph [ref=e392]: No node selected
+  - button "Open Next.js Dev Tools" [ref=e398] [cursor=pointer]:
+    - img [ref=e399] [cursor=pointer]
+  - alert [ref=e403]
+```

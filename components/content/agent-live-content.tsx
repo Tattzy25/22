@@ -23,9 +23,7 @@ import {
   Users,
   BarChart3,
   Globe,
-  Smartphone,
-  Monitor,
-  Zap
+  Smartphone
 } from "lucide-react"
 
 interface AgentConfig {
@@ -388,7 +386,7 @@ export function AgentLiveContent() {
                         className={`p-4 border-2 rounded-lg cursor-pointer transition-colors ${
                           config.theme === theme.id ? 'border-primary' : 'border-border hover:border-primary/50'
                         }`}
-                        onClick={() => setConfig(prev => ({ ...prev, theme: theme.id as any }))}
+                        onClick={() => setConfig(prev => ({ ...prev, theme: theme.id as 'light' | 'dark' | 'auto' }))}
                       >
                         <div className={`w-full h-12 rounded ${theme.preview} mb-2`}></div>
                         <div className="text-sm font-medium">{theme.name}</div>

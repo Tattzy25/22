@@ -52,59 +52,108 @@ const data = {
   ],
   navMain: [
     {
-      title: "Playground",
-      url: "#playground",
+      title: "Dashboard",
+      url: "#home",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
-          title: "History",
-          url: "#playground",
+          title: "Dashboard",
+          url: "#home",
         },
         {
-          title: "Starred",
-          url: "#playground",
+          title: "Analytics",
+          url: "#home",
         },
         {
-          title: "Settings",
-          url: "#settings",
+          title: "Activity",
+          url: "#home",
         },
       ],
     },
     {
-      title: "Models",
+      title: "AI Models",
       url: "#models",
       icon: Bot,
       items: [
         {
-          title: "Genesis",
+          title: "Marketplace",
           url: "#models",
         },
         {
-          title: "Explorer",
+          title: "My Models",
           url: "#models",
         },
         {
-          title: "Quantum",
+          title: "Favorites",
           url: "#models",
         },
       ],
     },
     {
-      title: "Builder",
-      url: "#builder",
+      title: "Playground",
+      url: "#playground",
       icon: Frame,
       items: [
         {
-          title: "Automation",
+          title: "Multi-Chat",
+          url: "#playground",
+        },
+        {
+          title: "Conversations",
+          url: "#playground",
+        },
+        {
+          title: "Templates",
+          url: "#playground",
+        },
+      ],
+    },
+    {
+      title: "Content Creation",
+      url: "#content-creation",
+      icon: BookOpen,
+      items: [
+        {
+          title: "Text Generation",
+          url: "#content-creation",
+        },
+        {
+          title: "Image Generation",
+          url: "#content-creation",
+        },
+        {
+          title: "Video Generation",
+          url: "#content-creation",
+        },
+      ],
+    },
+    {
+      title: "Automation",
+      url: "#automation",
+      icon: Settings2,
+      items: [
+        {
+          title: "Workflows",
           url: "#automation",
         },
         {
-          title: "Character",
-          url: "#character-builder",
+          title: "Integrations",
+          url: "#automation",
         },
         {
-          title: "Widget",
+          title: "API Manager",
+          url: "#api-manager",
+        },
+      ],
+    },
+    {
+      title: "Widget Generator",
+      url: "#widget-generator",
+      icon: Frame,
+      items: [
+        {
+          title: "Widget Generator",
           url: "#widget-generator",
         },
         {
@@ -170,7 +219,7 @@ const data = {
         },
         {
           title: "Billing",
-          url: "#api-manager",
+          url: "#sales-marketing",
         },
       ],
     },

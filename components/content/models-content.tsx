@@ -100,7 +100,6 @@ const models: AIModel[] = [
 export function ModelsContent() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedProvider, setSelectedProvider] = useState("all")
-  const [selectedModel, setSelectedModel] = useState<AIModel | null>(null)
 
   const filteredModels = models.filter(model => {
     const matchesSearch = model.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

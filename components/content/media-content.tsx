@@ -31,6 +31,7 @@ import {
   RefreshCw,
   Settings
 } from "lucide-react"
+import { MediaGenerationService, GeneratedImage, GeneratedMusic } from "@/lib/media-generation"
 
 interface MusicGeneration {
   id: string
@@ -111,39 +112,48 @@ export function MediaContent() {
     setIsGenerating(true)
     setGenerationProgress(0)
 
-    const newGeneration: MusicGeneration = {
-      id: `music-${Date.now()}`,
-      title: `Generated Music ${musicGenerations.length + 1}`,
-      genre: selectedGenre,
-      mood: selectedMood,
-      duration: duration[0],
-      tempo: tempo[0],
-      instruments: selectedInstruments,
-      prompt: musicPrompt,
-      status: 'generating',
-      createdAt: new Date()
+    try {
+      // Create enhanced prompt
+      const enhancedPrompt = await MediaGenerationService.generateMusicPrompt(musicPrompt)
+
+      // Generate music
+      const generatedMusic = await MediaGenerationService.generateMusic(enhancedPrompt)
+
+      const newGeneration: MusicGeneration = {
+        id: generatedMusic.id,
+        title: `Generated Music ${musicGenerations.length + 1}`,
+        genre: selectedGenre,
+        mood: selectedMood,
+        duration: generatedMusic.duration,
+        tempo: tempo[0],
+        instruments: selectedInstruments,
+        prompt: enhancedPrompt,
+        status: 'completed',
+        audioUrl: generatedMusic.url,
+        createdAt: generatedMusic.createdAt
+      }
+
+      setMusicGenerations(prev => [newGeneration, ...prev])
+      setGenerationProgress(100)
+    } catch (error) {
+      console.error('Failed to generate music:', error)
+      // Add failed generation to list
+      const failedGeneration: MusicGeneration = {
+        id: `music-${Date.now()}`,
+        title: `Generated Music ${musicGenerations.length + 1}`,
+        genre: selectedGenre,
+        mood: selectedMood,
+        duration: duration[0],
+        tempo: tempo[0],
+        instruments: selectedInstruments,
+        prompt: musicPrompt,
+        status: 'failed',
+        createdAt: new Date()
+      }
+      setMusicGenerations(prev => [failedGeneration, ...prev])
+    } finally {
+      setIsGenerating(false)
     }
-
-    setMusicGenerations(prev => [newGeneration, ...prev])
-
-    // Simulate AI generation process
-    const progressInterval = setInterval(() => {
-      setGenerationProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(progressInterval)
-          setMusicGenerations(prev =>
-            prev.map(gen =>
-              gen.id === newGeneration.id
-                ? { ...gen, status: 'completed', audioUrl: '/sample-music.mp3' }
-                : gen
-            )
-          )
-          setIsGenerating(false)
-          return 100
-        }
-        return prev + 10
-      })
-    }, 500)
   }
 
   const generateImage = async () => {
@@ -152,37 +162,44 @@ export function MediaContent() {
     setIsGenerating(true)
     setGenerationProgress(0)
 
-    const newGeneration: ImageGeneration = {
-      id: `image-${Date.now()}`,
-      title: `Generated Image ${imageGenerations.length + 1}`,
-      prompt: imagePrompt,
-      style: selectedStyle,
-      aspectRatio: aspectRatio,
-      quality: imageQuality,
-      status: 'generating',
-      createdAt: new Date()
+    try {
+      // Create enhanced prompt
+      const enhancedPrompt = await MediaGenerationService.enhancePrompt(imagePrompt, 'image')
+
+      // Generate image
+      const generatedImage = await MediaGenerationService.generateImage(enhancedPrompt)
+
+      const newGeneration: ImageGeneration = {
+        id: generatedImage.id,
+        title: `Generated Image ${imageGenerations.length + 1}`,
+        prompt: enhancedPrompt,
+        style: selectedStyle,
+        aspectRatio: aspectRatio,
+        quality: imageQuality,
+        status: 'completed',
+        imageUrl: generatedImage.url,
+        createdAt: generatedImage.createdAt
+      }
+
+      setImageGenerations(prev => [newGeneration, ...prev])
+      setGenerationProgress(100)
+    } catch (error) {
+      console.error('Failed to generate image:', error)
+      // Add failed generation to list
+      const failedGeneration: ImageGeneration = {
+        id: `image-${Date.now()}`,
+        title: `Generated Image ${imageGenerations.length + 1}`,
+        prompt: imagePrompt,
+        style: selectedStyle,
+        aspectRatio: aspectRatio,
+        quality: imageQuality,
+        status: 'failed',
+        createdAt: new Date()
+      }
+      setImageGenerations(prev => [failedGeneration, ...prev])
+    } finally {
+      setIsGenerating(false)
     }
-
-    setImageGenerations(prev => [newGeneration, ...prev])
-
-    // Simulate AI generation process
-    const progressInterval = setInterval(() => {
-      setGenerationProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(progressInterval)
-          setImageGenerations(prev =>
-            prev.map(gen =>
-              gen.id === newGeneration.id
-                ? { ...gen, status: 'completed', imageUrl: '/sample-image.jpg' }
-                : gen
-            )
-          )
-          setIsGenerating(false)
-          return 100
-        }
-        return prev + 8
-      })
-    }, 600)
   }
 
   const playAudio = (audioUrl: string, generationId: string) => {
@@ -475,7 +492,7 @@ export function MediaContent() {
 
                 <div className="space-y-2">
                   <Label>Quality</Label>
-                  <Select value={imageQuality} onValueChange={(value: any) => setImageQuality(value)}>
+                  <Select value={imageQuality} onValueChange={(value: 'standard' | 'hd' | 'ultra') => setImageQuality(value)}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>

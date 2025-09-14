@@ -11,29 +11,8 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Save, Play, RefreshCw, User, Bot, Sparkles } from "lucide-react"
-
-interface CharacterTraits {
-  creativity: number
-  intelligence: number
-  empathy: number
-  humor: number
-  formality: number
-  curiosity: number
-}
-
-interface Character {
-  id: string
-  name: string
-  description: string
-  avatar: string
-  baseModel: string
-  personality: string
-  traits: CharacterTraits
-  systemPrompt: string
-  exampleConversations: string[]
-  tags: string[]
-}
+import { Save, Play, RefreshCw, User, Bot, Sparkles, Wand2 } from "lucide-react"
+import { CharacterAIService, CharacterTraits, Character } from "@/lib/character-ai"
 
 const personalityTypes = [
   { id: "helpful", name: "Helpful Assistant", description: "Friendly and supportive" },
@@ -75,6 +54,9 @@ export function CharacterContent() {
 
   const [activeTab, setActiveTab] = useState("basic")
   const [isTesting, setIsTesting] = useState(false)
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [testMessage, setTestMessage] = useState("")
+  const [testResponse, setTestResponse] = useState("")
 
   const updateTrait = (trait: keyof CharacterTraits, value: number) => {
     setCharacter(prev => ({
@@ -86,34 +68,68 @@ export function CharacterContent() {
     }))
   }
 
-  const generateSystemPrompt = () => {
-    const personality = personalityTypes.find(p => p.id === character.personality)
-    const traits = character.traits
+  const generateDescription = async () => {
+    if (!character.name) return
 
-    const prompt = `You are ${character.name}, ${personality?.description.toLowerCase()}.
+    setIsGenerating(true)
+    try {
+      const description = await CharacterAIService.generateCharacterDescription(
+        character.name,
+        character.personality,
+        character.traits
+      )
+      setCharacter(prev => ({ ...prev, description }))
+    } catch (error) {
+      console.error('Failed to generate description:', error)
+    } finally {
+      setIsGenerating(false)
+    }
+  }
 
-Personality: ${personality?.name}
-Key Traits:
-- Creativity: ${traits.creativity}/100
-- Intelligence: ${traits.intelligence}/100
-- Empathy: ${traits.empathy}/100
-- Humor: ${traits.humor}/100
-- Formality: ${traits.formality}/100
-- Curiosity: ${traits.curiosity}/100
+  const generateSystemPrompt = async () => {
+    if (!character.name || !character.description) return
 
-${character.description}
-
-Always stay in character and respond according to your personality traits.`
-
-    setCharacter(prev => ({ ...prev, systemPrompt: prompt }))
+    setIsGenerating(true)
+    try {
+      const systemPrompt = await CharacterAIService.generateSystemPrompt(
+        character.name,
+        character.description,
+        character.personality,
+        character.traits
+      )
+      setCharacter(prev => ({ ...prev, systemPrompt }))
+    } catch (error) {
+      console.error('Failed to generate system prompt:', error)
+    } finally {
+      setIsGenerating(false)
+    }
   }
 
   const testCharacter = async () => {
+    if (!testMessage.trim() || !character.systemPrompt) return
+
     setIsTesting(true)
-    // Simulate testing the character
-    setTimeout(() => {
+    try {
+      const response = await CharacterAIService.testCharacter(character, testMessage)
+      setTestResponse(response)
+    } catch (error) {
+      console.error('Failed to test character:', error)
+      setTestResponse("Sorry, I encountered an error while testing the character.")
+    } finally {
       setIsTesting(false)
-    }, 2000)
+    }
+  }
+
+  const generateExamples = async () => {
+    setIsGenerating(true)
+    try {
+      const examples = await CharacterAIService.generateExampleConversations(character)
+      setCharacter(prev => ({ ...prev, exampleConversations: examples }))
+    } catch (error) {
+      console.error('Failed to generate examples:', error)
+    } finally {
+      setIsGenerating(false)
+    }
   }
 
   const saveCharacter = () => {
@@ -247,6 +263,20 @@ Always stay in character and respond according to your personality traits.`
                     onChange={(e) => setCharacter(prev => ({ ...prev, description: e.target.value }))}
                     rows={3}
                   />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={generateDescription}
+                    disabled={isGenerating || !character.name}
+                    className="w-full"
+                  >
+                    {isGenerating ? (
+                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Wand2 className="h-4 w-4 mr-2" />
+                    )}
+                    Generate Description with AI
+                  </Button>
                 </div>
 
                 <div className="space-y-2">
@@ -316,8 +346,18 @@ Always stay in character and respond according to your personality traits.`
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label>System Prompt</Label>
-                    <Button variant="outline" size="sm" onClick={generateSystemPrompt}>
-                      Generate from Traits
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={generateSystemPrompt}
+                      disabled={isGenerating || !character.name || !character.description}
+                    >
+                      {isGenerating ? (
+                        <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <Wand2 className="h-4 w-4 mr-2" />
+                      )}
+                      Generate with AI
                     </Button>
                   </div>
                   <Textarea
@@ -362,6 +402,77 @@ Always stay in character and respond according to your personality traits.`
           </CardContent>
         </Card>
       </div>
+
+      {/* Character Testing Interface */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Bot className="h-5 w-5" />
+            Test Character
+          </CardTitle>
+          <CardDescription>
+            Test your character&apos;s responses in real-time
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="test-input">Test Message</Label>
+              <Textarea
+                id="test-input"
+                placeholder="Enter a message to test your character..."
+                value={testMessage}
+                onChange={(e) => setTestMessage(e.target.value)}
+                rows={3}
+              />
+              <Button
+                onClick={testCharacter}
+                disabled={isTesting || !testMessage.trim() || !character.systemPrompt}
+                className="w-full"
+              >
+                {isTesting ? (
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Play className="h-4 w-4 mr-2" />
+                )}
+                Test Character
+              </Button>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Character Response</Label>
+              <div className="min-h-[120px] p-3 border rounded-lg bg-muted/50">
+                {testResponse ? (
+                  <p className="text-sm">{testResponse}</p>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Character response will appear here...
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {character.exampleConversations.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label>Example Conversations</Label>
+                <Button variant="outline" size="sm" onClick={generateExamples}>
+                  <Wand2 className="h-4 w-4 mr-2" />
+                  Generate New Examples
+                </Button>
+              </div>
+              <div className="space-y-2 max-h-40 overflow-y-auto">
+                {character.exampleConversations.map((conversation, index) => (
+                  <div key={index} className="p-2 border rounded text-sm">
+                    <pre className="whitespace-pre-wrap font-sans">{conversation}</pre>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }
