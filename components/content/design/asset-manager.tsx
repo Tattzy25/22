@@ -6,10 +6,17 @@ import { Label } from "@/components/ui/label"
 import { Image as ImageIcon, Upload, Palette } from "lucide-react"
 import { BrandingAssets } from "./types"
 
+interface Theme {
+  primaryColor: string
+  secondaryColor: string
+  accentColor: string
+  backgroundColor: string
+}
+
 interface AssetManagerProps {
   brandingAssets: BrandingAssets
   onAssetUpload: (type: keyof BrandingAssets, event: React.ChangeEvent<HTMLInputElement>) => void
-  currentTheme: any // Using any to avoid import issues
+  currentTheme: Theme
 }
 
 export function AssetManager({ brandingAssets, onAssetUpload, currentTheme }: AssetManagerProps) {

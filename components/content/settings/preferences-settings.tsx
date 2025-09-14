@@ -22,7 +22,7 @@ interface PreferencesSettingsProps {
   theme: 'light' | 'dark' | 'system'
   setTheme: (theme: 'light' | 'dark' | 'system') => void
   accountSettings: AccountSettings
-  updateAccountSetting: (key: keyof AccountSettings, value: any) => void
+  updateAccountSetting: (key: keyof AccountSettings, value: AccountSettings[keyof AccountSettings]) => void
 }
 
 export function PreferencesSettings({
@@ -42,7 +42,7 @@ export function PreferencesSettings({
       <CardContent className="space-y-6">
         <div className="space-y-2">
           <Label>Theme</Label>
-          <Select value={theme} onValueChange={(value: any) => setTheme(value)}>
+          <Select value={theme} onValueChange={(value: 'light' | 'dark' | 'system') => setTheme(value)}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>

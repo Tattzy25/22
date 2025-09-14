@@ -21,7 +21,7 @@ interface AccountSettings {
 
 interface SecuritySettingsProps {
   accountSettings: AccountSettings
-  updateAccountSetting: (key: keyof AccountSettings, value: any) => void
+  updateAccountSetting: (key: keyof AccountSettings, value: AccountSettings[keyof AccountSettings]) => void
   showApiKey: boolean
   setShowApiKey: (show: boolean) => void
   generateApiKey: () => void

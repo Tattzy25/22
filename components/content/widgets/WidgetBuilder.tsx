@@ -10,7 +10,7 @@ import { Loader2, Settings, Code } from "lucide-react"
 import type { Widget, WidgetConfig } from "./types"
 
 type ThemeOption = { id: 'light' | 'dark' | 'auto'; name: string; preview: string }
-type WidgetTypeOption = { id: WidgetConfig['type']; name: string; description: string; icon: any }
+type WidgetTypeOption = { id: WidgetConfig['type']; name: string; description: string; icon: React.ComponentType<{ className?: string }> }
 
 type Props = {
   config: WidgetConfig

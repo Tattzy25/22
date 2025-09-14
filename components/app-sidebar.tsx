@@ -148,6 +148,26 @@ const data = {
       ],
     },
     {
+      title: "Page Builder",
+      url: "#page-builder",
+      icon: Frame,
+      isActive: false,
+      items: [
+        {
+          title: "Visual Editor",
+          url: "#page-builder",
+        },
+        {
+          title: "Templates",
+          url: "#page-builder",
+        },
+        {
+          title: "Components",
+          url: "#page-builder",
+        },
+      ],
+    },
+    {
       title: "Widget Generator",
       url: "#widget-generator",
       icon: Frame,

@@ -64,7 +64,7 @@ export function PlaygroundContent() {
       const response = await fetch('/api/models')
       if (response.ok) {
         const data = await response.json()
-        setAvailableModels(data.models?.map((model: any) => ({
+        setAvailableModels(data.models?.map((model: { id: string; name: string }) => ({
           id: model.id,
           name: model.name
         })) || DEFAULT_MODELS)
@@ -275,19 +275,12 @@ export function PlaygroundContent() {
                   {availableModels.map(model => (
                     <SelectItem key={model.id} value={model.id}>
                       <div className="flex items-center gap-2">
-                        <span>{model.icon}</span>
                         <span>{model.name}</span>
-                        <Badge variant="outline" className="text-xs">
-                          {model.provider}
-                        </Badge>
                       </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <Badge variant="secondary">
-                {availableModels.find(m => m.id === session.model)?.provider}
-              </Badge>
             </div>
 
             {/* Messages */}
@@ -298,7 +291,7 @@ export function PlaygroundContent() {
                     {message.role === 'assistant' && (
                       <Avatar className="h-8 w-8">
                         <AvatarFallback>
-                          {availableModels.find(m => m.id === message.model)?.icon || "🤖"}
+                          🤖
                         </AvatarFallback>
                       </Avatar>
                     )}
@@ -334,7 +327,7 @@ export function PlaygroundContent() {
                   <div className="flex gap-3 justify-start">
                     <Avatar className="h-8 w-8">
                       <AvatarFallback>
-                        {availableModels.find(m => m.id === session.model)?.icon || "🤖"}
+                        🤖
                       </AvatarFallback>
                     </Avatar>
                     <div className="bg-muted rounded-lg p-3">

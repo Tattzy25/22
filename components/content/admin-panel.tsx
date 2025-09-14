@@ -4,6 +4,21 @@ import { useState } from "react"
 import ModelAdmin from "@/components/admin/model-admin"
 import { ModelCard } from "@/components/models"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { CustomizationFooter } from "@/components/admin/customization-footer"
+import { PageBuilder } from "@/components/admin/page-builder"
+import { useAdminMode } from "@/contexts/admin-mode-context"
+
+interface ModelFormData {
+  name: string;
+  provider: string;
+  category: string;
+  capabilities: string[];
+  description: string;
+  contextWindow: string;
+  responseTime: string;
+  inputTokens: string;
+  outputTokens: string;
+}
 
 interface PreviewModel {
   id: string
@@ -23,8 +38,10 @@ interface PreviewModel {
 
 export function AdminPanel() {
   const [previewModel, setPreviewModel] = useState<PreviewModel | null>(null)
+  const [currentPageId, setCurrentPageId] = useState('home')
+  const { isAdminMode, toggleAdminMode } = useAdminMode()
 
-  const handleFormChange = (formData: any) => {
+  const handleFormChange = (formData: ModelFormData) => {
     // Convert form data to preview model format
     const preview: PreviewModel = {
       id: formData.name.toLowerCase().replace(/\s+/g, '-'),
@@ -56,6 +73,19 @@ export function AdminPanel() {
         </div>
       </div>
 
+      {/* Page Builder Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Page Builder</CardTitle>
+          <CardDescription>
+            Customize the content and layout for the selected page. Drag and drop components to build your page.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <PageBuilder pageId={currentPageId} isAdminMode={true} />
+        </CardContent>
+      </Card>
+
       {/* AI Model Management Section */}
       <div className="space-y-4">
         <div>
@@ -83,7 +113,16 @@ export function AdminPanel() {
               </CardHeader>
               <CardContent>
                 {previewModel ? (
-                  <ModelCard model={previewModel} />
+                  <ModelCard
+                    id={previewModel.id}
+                    name={previewModel.name}
+                    provider={previewModel.provider}
+                    capabilities={previewModel.capabilities}
+                    description={previewModel.description}
+                    contextWindow={previewModel.contextWindow}
+                    responseTime={previewModel.responseTime}
+                    pricing={previewModel.pricing}
+                  />
                 ) : (
                   <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center">
                     <div className="text-muted-foreground">
@@ -105,6 +144,14 @@ export function AdminPanel() {
           </div>
         </div>
       </div>
+
+      {/* Customization Management Footer */}
+      <CustomizationFooter
+        onPageChange={setCurrentPageId}
+        currentPageId={currentPageId}
+        onAdminModeToggle={toggleAdminMode}
+        isAdminMode={isAdminMode}
+      />
     </div>
   )
 }

@@ -45,7 +45,7 @@ export function useSettingsState() {
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system')
   const [showApiKey, setShowApiKey] = useState(false)
 
-  const updateBrandingSetting = (key: keyof BrandingSettings, value: any) => {
+  const updateBrandingSetting = (key: keyof BrandingSettings, value: BrandingSettings[keyof BrandingSettings]) => {
     setBrandingSettings(prev => ({ ...prev, [key]: value }))
   }
 
@@ -53,7 +53,7 @@ export function useSettingsState() {
     setNotificationSettings(prev => ({ ...prev, [key]: value }))
   }
 
-  const updateAccountSetting = (key: keyof AccountSettings, value: any) => {
+  const updateAccountSetting = (key: keyof AccountSettings, value: AccountSettings[keyof AccountSettings]) => {
     setAccountSettings(prev => ({ ...prev, [key]: value }))
   }
 

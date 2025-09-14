@@ -34,9 +34,16 @@ interface WorkflowNode {
   name: string
   description: string
   icon: React.ReactNode
-  config: Record<string, any>
+  config: Record<string, unknown>
   position: { x: number; y: number }
   connections: string[]
+}
+
+interface NodeType {
+  type: 'trigger' | 'action' | 'condition' | 'filter' | 'delay' | 'webhook'
+  name: string
+  description: string
+  icon: React.ReactNode
 }
 
 interface Workflow {
@@ -92,7 +99,7 @@ export function BuilderContent() {
   ])
 
   const [selectedWorkflow, setSelectedWorkflow] = useState<Workflow | null>(workflows[0])
-  const [draggedNode, setDraggedNode] = useState<any>(null)
+  const [draggedNode, setDraggedNode] = useState<NodeType | null>(null)
   const [isCreatingWorkflow, setIsCreatingWorkflow] = useState(false)
   const [newWorkflowName, setNewWorkflowName] = useState('')
   const [newWorkflowDescription, setNewWorkflowDescription] = useState('')
@@ -118,7 +125,7 @@ export function BuilderContent() {
     setNewWorkflowDescription('')
   }
 
-  const addNodeToWorkflow = useCallback((nodeType: any, position: { x: number; y: number }) => {
+  const addNodeToWorkflow = useCallback((nodeType: NodeType, position: { x: number; y: number }) => {
     if (!selectedWorkflow) return
 
     const newNode: WorkflowNode = {
@@ -152,7 +159,7 @@ export function BuilderContent() {
     setDraggedNode(null)
   }, [draggedNode, addNodeToWorkflow])
 
-  const handleDragStart = (nodeType: any) => {
+  const handleDragStart = (nodeType: NodeType) => {
     setDraggedNode(nodeType)
   }
 

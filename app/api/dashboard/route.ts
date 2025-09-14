@@ -1,8 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { databaseService } from '@/lib/database'
+import { NextResponse } from 'next/server'
+import { databaseService, Conversation, Generation } from '@/lib/database'
 import { authService } from '@/lib/auth'
 
-export async function GET(request: NextRequest) {
+interface Activity {
+  id: string
+  type: string
+  title: string
+  timestamp: string
+  status: string
+}
+
+export async function GET() {
   try {
     const user = await authService.getCurrentUser()
 
@@ -14,13 +22,13 @@ export async function GET(request: NextRequest) {
     const [conversations, generations, stats] = await Promise.all([
       databaseService.getUserConversations(user.id, 5),
       databaseService.getUserGenerations(user.id, undefined, 5),
-      databaseService.getUserStats(user.id)
+      databaseService.getStats(user.id)
     ])
 
     // Transform data for display
-    const activities = []
+    const activities: Activity[] = []
 
-    conversations.forEach((conv: any) => {
+    conversations.forEach((conv: Conversation) => {
       activities.push({
         id: conv.id,
         type: 'chat',
@@ -30,18 +38,18 @@ export async function GET(request: NextRequest) {
       })
     })
 
-    generations.forEach((gen: any) => {
+    generations.forEach((gen: Generation) => {
       activities.push({
         id: gen.id,
         type: gen.type === 'image' ? 'image' : gen.type === 'music' ? 'music' : 'character',
         title: gen.prompt?.substring(0, 50) + '...' || 'Generated content',
         timestamp: gen.created_at,
-        status: (gen.status === 'completed' || gen.status === 'processing' || gen.status === 'failed') ? gen.status : 'completed'
+        status: 'completed'
       })
     })
 
     // Sort activities by timestamp
-    activities.sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    activities.sort((a: Activity, b: Activity) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 
     return NextResponse.json({
       activities: activities.slice(0, 10), // Limit to 10 most recent

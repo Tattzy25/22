@@ -8,11 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator"
 import { Settings, Gift, Users, Shield } from "lucide-react"
 
-interface SubscriptionSettingsProps {
-  // Add any props if needed
-}
-
-export function SubscriptionSettings({}: SubscriptionSettingsProps) {
+export function SubscriptionSettings() {
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <Card>

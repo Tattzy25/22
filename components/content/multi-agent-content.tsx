@@ -69,8 +69,8 @@ interface MultiAgentWorkflow {
       id: string
       agentId: string
       action: string
-      inputs: Record<string, any>
-      outputs: Record<string, any>
+      inputs: Record<string, unknown>
+      outputs: Record<string, unknown>
     }>
   }
   status: 'stopped' | 'running' | 'paused'
@@ -167,7 +167,7 @@ export function MultiAgentContent() {
     const connection: MCPConnection = {
       id: `mcp-${Date.now()}`,
       name: provider.name,
-      type: provider.type as any,
+      type: 'tool',
       provider: providerId,
       status: 'connected',
       description: provider.description

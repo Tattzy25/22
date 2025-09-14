@@ -26,7 +26,7 @@ interface BrandingSettings {
 
 interface BrandingSettingsProps {
   brandingSettings: BrandingSettings
-  updateBrandingSetting: (key: keyof BrandingSettings, value: any) => void
+  updateBrandingSetting: (key: keyof BrandingSettings, value: BrandingSettings[keyof BrandingSettings]) => void
 }
 
 export function BrandingSettings({ brandingSettings, updateBrandingSetting }: BrandingSettingsProps) {
@@ -35,7 +35,7 @@ export function BrandingSettings({ brandingSettings, updateBrandingSetting }: Br
       <CardHeader>
         <CardTitle>Brand Customization</CardTitle>
         <CardDescription>
-          Customize your platform's appearance and branding
+          Customize your platform&apos;s appearance and branding
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">

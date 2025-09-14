@@ -133,7 +133,7 @@ export function UsageAnalytics({ usageStats, getUsagePercentage }: UsageAnalytic
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            You're approaching your monthly token limit. Consider upgrading your plan to avoid service interruptions.
+            You&apos;re approaching your monthly token limit. Consider upgrading your plan to avoid service interruptions.
           </AlertDescription>
         </Alert>
       )}

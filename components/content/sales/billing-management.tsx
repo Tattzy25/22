@@ -16,7 +16,7 @@ interface SubscriptionPlan {
   tokens: number
   features: string[]
   popular?: boolean
-  icon: any
+  icon: React.ComponentType<{ className?: string }>
   color: string
 }
 

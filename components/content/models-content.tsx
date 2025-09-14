@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { Search, Bot, Zap, ExternalLink, Loader2, Settings, Palette, Type, Image, Eye, X, Info } from "lucide-react"
+import { turso } from "@/lib/turso"
 
 interface AIModel {
   id: string
@@ -88,55 +89,71 @@ export function ModelsContent() {
       setIsLoading(true)
       setError(null)
 
-      // Try to fetch from Supabase first
-      const { createClientComponentClient } = await import('@supabase/auth-helpers-nextjs')
-      const supabase = createClientComponentClient()
+      // Fetch models with their best available provider using Turso
+      const modelsResult = await turso.execute(`
+        SELECT
+          m.id,
+          m.name,
+          m.category,
+          m.capabilities,
+          m.description,
+          m.context_window,
+          m.response_time,
+          mp.provider,
+          mp.pricing,
+          mp.priority,
+          mp.is_active
+        FROM models m
+        LEFT JOIN model_providers mp ON m.id = mp.model_id
+        WHERE mp.is_active = 1
+        ORDER BY m.name, mp.priority ASC
+      `)
 
-      // Fetch models with their best available provider (highest priority, active)
-      const { data: modelsData, error: modelsError } = await supabase
-        .from('models')
-        .select(`
-          id,
-          name,
-          category,
-          capabilities,
-          description,
-          context_window,
-          response_time,
-          model_providers (
-            provider,
-            pricing,
-            priority,
-            is_active
-          )
-        `)
-        .order('name')
+      if (modelsResult.rows.length > 0) {
+        // Group by model and get the best provider for each
+        const modelMap = new Map()
 
-      if (modelsError) {
-        console.error('Supabase error:', modelsError)
-        throw modelsError
-      }
+        modelsResult.rows.forEach(row => {
+          const modelId = row.id as string
+          if (!modelMap.has(modelId)) {
+            modelMap.set(modelId, {
+              id: modelId,
+              name: row.name as string,
+              category: row.category as string,
+              capabilities: JSON.parse(row.capabilities as string || '[]'),
+              description: row.description as string || '',
+              context_window: row.context_window as string,
+              response_time: row.response_time as string,
+              providers: []
+            })
+          }
+          if (row.provider) {
+            modelMap.get(modelId).providers.push({
+              provider: row.provider as string,
+              pricing: JSON.parse(row.pricing as string || '{}'),
+              priority: row.priority as number,
+              is_active: row.is_active as number
+            })
+          }
+        })
 
-      if (modelsData && modelsData.length > 0) {
-        // Transform the data to match the expected format
-        const transformedModels: AIModel[] = modelsData.map(model => {
-          // Get the best available provider (highest priority, active)
-          const activeProviders = model.model_providers?.filter((mp: any) => mp.is_active) || []
-          const bestProvider = activeProviders.sort((a: any, b: any) => a.priority - b.priority)[0]
+        // Transform to expected format
+        const transformedModels: AIModel[] = Array.from(modelMap.values()).map(modelData => {
+          const bestProvider = modelData.providers.sort((a: { priority: number }, b: { priority: number }) => a.priority - b.priority)[0]
 
           return {
-            id: model.id,
-            name: model.name,
+            id: modelData.id,
+            name: modelData.name,
             provider: bestProvider?.provider || 'Unknown',
-            description: model.description || '',
-            capabilities: model.capabilities || [],
+            description: modelData.description,
+            capabilities: modelData.capabilities,
             pricing: {
               inputTokens: bestProvider?.pricing?.inputTokens || '',
               outputTokens: bestProvider?.pricing?.outputTokens || '',
             },
-            rating: 4.5, // Default rating since we don't have this in the schema
-            contextWindow: parseInt(model.context_window?.replace(/[^\d]/g, '') || '0'),
-            responseTime: model.response_time || 'Unknown',
+            rating: 4.5,
+            contextWindow: parseInt(modelData.context_window?.replace(/[^\d]/g, '') || '0'),
+            responseTime: modelData.response_time || 'Unknown',
             status: 'available' as const
           }
         })
@@ -147,7 +164,7 @@ export function ModelsContent() {
         const uniqueProviders = ['all', ...new Set(transformedModels.map(m => m.provider))]
         setProviders(uniqueProviders)
       } else {
-        // No data from Supabase, show demo data
+        // No data from Turso, show demo data
         throw new Error('No models found')
       }
     } catch (err) {

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Audiowide, Orbitron } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AdminModeProvider } from "@/contexts/admin-mode-context";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -46,7 +47,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <AdminModeProvider>
+            {children}
+          </AdminModeProvider>
         </ThemeProvider>
       </body>
     </html>

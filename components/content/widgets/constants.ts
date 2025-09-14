@@ -1,6 +1,6 @@
 import { MessageSquare, Zap, Bot, Code, ExternalLink, Monitor } from "lucide-react"
 
-export const widgetTypes = [
+export const widgetTypes: { id: 'chat' | 'form' | 'button' | 'embed' | 'popup' | 'sidebar'; name: string; description: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { id: 'chat', name: 'Chat Widget', description: 'Interactive chat interface', icon: MessageSquare },
   { id: 'button', name: 'Action Button', description: 'Simple call-to-action button', icon: Zap },
   { id: 'form', name: 'Contact Form', description: 'AI-powered contact form', icon: Bot },
@@ -9,7 +9,7 @@ export const widgetTypes = [
   { id: 'sidebar', name: 'Sidebar Panel', description: 'Slide-out sidebar widget', icon: Monitor }
 ]
 
-export const themes = [
+export const themes: { id: 'light' | 'dark' | 'auto'; name: string; preview: string }[] = [
   { id: 'light', name: 'Light', preview: 'bg-white text-black border-gray-200' },
   { id: 'dark', name: 'Dark', preview: 'bg-gray-900 text-white border-gray-700' },
   { id: 'auto', name: 'Auto', preview: 'bg-gradient-to-r from-white to-gray-100 border-gray-300' }

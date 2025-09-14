@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { X, Plus, Save } from "lucide-react";
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { turso } from "@/lib/turso";
 
 interface ModelFormData {
   name: string;
@@ -41,8 +41,6 @@ export default function ModelAdmin({ onFormChange }: ModelAdminProps) {
   const [newCapability, setNewCapability] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
-
-  const supabase = createClientComponentClient();
 
   const handleInputChange = (field: keyof ModelFormData, value: string) => {
     setFormData(prev => {
@@ -84,69 +82,64 @@ export default function ModelAdmin({ onFormChange }: ModelAdminProps) {
 
     try {
       // First, check if model exists, if not create it
-      let { data: existingModel, error: modelCheckError } = await supabase
-        .from('models')
-        .select('id')
-        .eq('name', formData.name)
-        .single();
-
-      if (modelCheckError && modelCheckError.code !== 'PGRST116') {
-        throw modelCheckError;
-      }
+      const existingModelResult = await turso.execute({
+        sql: "SELECT id FROM models WHERE name = ?",
+        args: [formData.name],
+      });
 
       let modelId: string;
 
-      if (!existingModel) {
+      if (existingModelResult.rows.length === 0) {
         // Create new model
-        const { data: newModel, error: modelError } = await supabase
-          .from('models')
-          .insert({
-            name: formData.name,
-            category: formData.category,
-            capabilities: formData.capabilities,
-            description: formData.description,
-            context_window: formData.contextWindow,
-            response_time: formData.responseTime,
-          })
-          .select('id')
-          .single();
+        const newModelResult = await turso.execute({
+          sql: `INSERT INTO models (name, category, capabilities, description, context_window, response_time)
+                VALUES (?, ?, ?, ?, ?, ?) RETURNING id`,
+          args: [
+            formData.name,
+            formData.category,
+            JSON.stringify(formData.capabilities),
+            formData.description,
+            formData.contextWindow,
+            formData.responseTime,
+          ],
+        });
 
-        if (modelError) throw modelError;
-        modelId = newModel.id;
+        if (newModelResult.rows.length === 0) {
+          throw new Error("Failed to create model");
+        }
+        modelId = newModelResult.rows[0].id as string;
       } else {
         // Update existing model
-        const { error: updateError } = await supabase
-          .from('models')
-          .update({
-            category: formData.category,
-            capabilities: formData.capabilities,
-            description: formData.description,
-            context_window: formData.contextWindow,
-            response_time: formData.responseTime,
-          })
-          .eq('id', existingModel.id);
-
-        if (updateError) throw updateError;
-        modelId = existingModel.id;
+        modelId = existingModelResult.rows[0].id as string;
+        await turso.execute({
+          sql: `UPDATE models SET category = ?, capabilities = ?, description = ?, context_window = ?, response_time = ?
+                WHERE id = ?`,
+          args: [
+            formData.category,
+            JSON.stringify(formData.capabilities),
+            formData.description,
+            formData.contextWindow,
+            formData.responseTime,
+            modelId,
+          ],
+        });
       }
 
       // Create or update model-provider relationship
-      const { error: providerError } = await supabase
-        .from('model_providers')
-        .upsert({
-          model_id: modelId,
-          provider: formData.provider,
-          pricing: {
+      await turso.execute({
+        sql: `INSERT OR REPLACE INTO model_providers (model_id, provider, pricing, priority, is_active)
+              VALUES (?, ?, ?, ?, ?)`,
+        args: [
+          modelId,
+          formData.provider,
+          JSON.stringify({
             inputTokens: formData.inputTokens,
             outputTokens: formData.outputTokens,
-          },
-          priority: 1, // Default priority
-          is_active: true,
-        }, {
-          onConflict: 'model_id,provider'
-        });
-
-      if (providerError) throw providerError;
+          }),
+          1, // Default priority
+          true, // is_active
+        ],
+      });
 
       setMessage("Model saved successfully!");
       // Reset form
