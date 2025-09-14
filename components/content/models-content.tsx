@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
-import { Search, Bot, Zap, Star, ExternalLink, Loader2, Settings, Palette, Type, Image, Eye, X } from "lucide-react"
+import { Search, Bot, Zap, ExternalLink, Loader2, Settings, Palette, Type, Image, Eye, X, Info } from "lucide-react"
 
 interface AIModel {
   id: string
@@ -24,7 +24,6 @@ interface AIModel {
   contextWindow: number
   responseTime: string
   status: 'available' | 'beta' | 'deprecated'
-  icon: string
 }
 
 export function ModelsContent() {
@@ -106,8 +105,7 @@ export function ModelsContent() {
             rating: 4.9,
             contextWindow: 128000,
             responseTime: "~2-3s",
-            status: "available",
-            icon: "🤖"
+            status: "available" as const
           },
           {
             id: "claude-3-opus",
@@ -119,8 +117,7 @@ export function ModelsContent() {
             rating: 4.8,
             contextWindow: 200000,
             responseTime: "~2-4s",
-            status: "available",
-            icon: "🧠"
+            status: "available" as const
           },
           {
             id: "gemini-pro",
@@ -132,8 +129,7 @@ export function ModelsContent() {
             rating: 4.7,
             contextWindow: 1000000,
             responseTime: "~1-2s",
-            status: "available",
-            icon: "🚀"
+            status: "available" as const
           },
           {
             id: "command-r",
@@ -145,8 +141,7 @@ export function ModelsContent() {
             rating: 4.3,
             contextWindow: 128000,
             responseTime: "~1-2s",
-            status: "available",
-            icon: "🏢"
+            status: "available" as const
           }
         ]
         setModels(demoModels)
@@ -167,8 +162,7 @@ export function ModelsContent() {
           rating: 4.9,
           contextWindow: 128000,
           responseTime: "~2-3s",
-          status: "available",
-          icon: "🤖"
+          status: "available" as const
         },
         {
           id: "claude-3-opus",
@@ -180,8 +174,7 @@ export function ModelsContent() {
           rating: 4.8,
           contextWindow: 200000,
           responseTime: "~2-4s",
-          status: "available",
-          icon: "🧠"
+          status: "available" as const
         }
       ]
       setModels(demoModels)
@@ -273,59 +266,40 @@ export function ModelsContent() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {filteredModels.map(model => (
           <Card key={model.id} className="cursor-pointer hover:shadow-md transition-shadow">
-            <CardHeader className="pb-3">
+            <CardHeader className="pb-2">
               <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="text-2xl">{model.icon}</div>
-                  <div>
-                    <CardTitle className="text-lg">{model.name}</CardTitle>
-                    <CardDescription className="text-sm">{model.provider}</CardDescription>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  <span className="text-sm font-medium">{model.rating}</span>
+                <div>
+                  <CardTitle className="text-lg" style={{ fontFamily: 'var(--font-audiowide)', fontWeight: 300 }}>{model.name}</CardTitle>
+                  {/* NOTE: Spacing between provider name and capabilities has been carefully adjusted to -16px overlap. DO NOT change this gap. */}
+                  <CardDescription className="text-sm -mb-6">{model.provider}</CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                {model.description}
-              </p>
-
-              <div className="flex flex-wrap gap-1">
-                {model.capabilities.slice(0, 3).map(capability => (
-                  <Badge key={capability} variant="secondary" className="text-xs">
-                    {capability}
-                  </Badge>
+            <CardContent className="space-y-3 pt-0">
+              <div className="space-y-0.25 mt-0">
+                {model.capabilities.slice(0, 4).map(capability => (
+                  <div key={capability} className="flex items-center text-sm text-muted-foreground">
+                    <span className="mr-2">•</span>
+                    <span>{capability}</span>
+                  </div>
                 ))}
-                {model.capabilities.length > 3 && (
-                  <Badge variant="outline" className="text-xs">
-                    +{model.capabilities.length - 3}
-                  </Badge>
-                )}
-              </div>
-
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-medium text-green-600">
-                  {model.pricing.inputTokens} in / {model.pricing.outputTokens} out
-                </span>
-                <span className="text-muted-foreground">{model.responseTime}</span>
               </div>
 
               <div className="flex gap-2">
+                <Button size="sm" className="flex-1">
+                  <Zap className="h-4 w-4 mr-2" />
+                  Try Now
+                </Button>
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      Details
+                    <Button variant="outline" size="sm" className="rounded-full w-6 h-6 p-0 hover:bg-muted">
+                      <Info className="h-3 w-3" />
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl">
                     <DialogHeader>
                       <DialogTitle className="flex items-center gap-3">
-                        <span className="text-2xl">{model.icon}</span>
-                        {model.name}
+                        <span style={{ fontFamily: 'var(--font-audiowide)', fontWeight: 300 }}>{model.name}</span>
                         <Badge variant="secondary">{model.provider}</Badge>
                       </DialogTitle>
                       <DialogDescription>{model.description}</DialogDescription>
@@ -375,11 +349,6 @@ export function ModelsContent() {
                     </div>
                   </DialogContent>
                 </Dialog>
-
-                <Button size="sm" className="flex-1">
-                  <Zap className="h-4 w-4 mr-2" />
-                  Try Now
-                </Button>
               </div>
             </CardContent>
           </Card>
