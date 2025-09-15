@@ -11,6 +11,7 @@ import { ModelCard } from "@/components/models/model-card"
 interface APIModel {
   id: string
   name: string
+  display_name?: string | null
   provider: string
   capabilities: string[]
   tooltip?: string
@@ -63,7 +64,7 @@ export function ModelsContent() {
       // Transform to AIModel format
       const transformedModels: AIModel[] = modelsData.map((model: APIModel) => ({
         id: model.id,
-        name: model.name,
+        name: model.display_name || model.name || 'Unknown Model',
         provider: model.provider,
         description: model.tooltip || '',
         capabilities: model.capabilities,
@@ -193,14 +194,14 @@ export function ModelsContent() {
       </div>
 
       {/* Models Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {filteredModels.map(model => (
           <ModelCard
             key={model.id}
             name={model.name}
             provider={model.provider}
             capabilities={model.capabilities}
-            tooltip={model.description}
+            
             status={model.status === 'available' ? 'available' : 'unavailable'}
             onTry={() => {
               // TODO: Implement try model functionality

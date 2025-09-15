@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 // Read the official models list
 const officialModelsPath = path.join(__dirname, 'official-models.txt');

@@ -245,6 +245,11 @@ const data = {
       url: "#admin-panel",
       icon: Settings2,
     },
+    {
+      name: "Admin",
+      url: "#admin",
+      icon: Settings2,
+    },
   ],
 }
 

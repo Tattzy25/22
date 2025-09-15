@@ -1,0 +1,119 @@
+provider,Model Name,Capabilities 1,Capabilities 2,Capabilities 3,Capabilities 4
+anthropic,Claude Sonnet 4,Coding,Efficiency,Steerable,Context
+openai,GPT-5,Reasoning,Knowledge,Generation,Agentic
+google,Gemini 2.0 Flash,Speed,Tools,Multimodal,Context
+openai,GPT-4.1 Nano,Fast,Cheap,Context,Smart
+openai,GPT-5 Mini,Scaled,Balanced,Reasoning,Coding
+google,Gemini 2.5 Pro,Advanced,Reasoning,Coding,Context
+google,Gemini 2.5 Flash,Rounded,Agentic,Multimodal,Context
+google,Gemini 2.5 Flash-Lite,Low-latency,Configurable,Tools,Multimodal
+openai,GPT-4.1,Coding,Following,Context,Latest
+openai,Text Embedding v3 Small,Embeddings,Cheap,Multilingual,Search
+openai,GPT-4.1 Mini,Small,Smart,Fast,Balanced
+anthropic,Claude 3.7 Sonnet,Hybrid,Instant,Coding,Enterprise
+openai,GPT-5 Nano,Throughput,Simple,Minimal,Cheap
+deepseek,DeepSeek V3.1,Long-context,Reasoning,Enhanced,Two-phase
+openai,GPT-4o,Expertise,Fast,Skilled,Optimized
+moonshotai,Kimi K2 (0905),MoE,Coding,Agentic,Context
+moonshotai,Kimi K2,MoE,Agentic,Coding,Frontier
+alibaba,Qwen3 Coder,Coding,Agentic,Context,Multilingual
+anthropic,Claude Opus 4.1,Powerful,Reasoning,Coding,Multimodal
+openai,GPT-4o Mini,Small,Smart,Fast,Efficient
+openai,GPT-OSS 120B,Open-source,MoE,Reasoning,Agentic
+xai,Grok Code Fast 1,Fast,Agentic,Context,Efficient
+stealth,Sonoma Sky Alpha,Intelligence,Context,Multimodal,Tools
+anthropic,Claude 3.5 Sonnet,Smart,Fast,Vision,Enterprise
+google,Gemini 2.0 Flash-Lite,Fast,Cheap,Quality,Context
+xai,Grok 3 Mini,Lightweight,Reasoning,Logic,Transparent
+xai,Grok 4,Flagship,Performance,Math,All-rounder
+xai,Grok 3,Enterprise,Domain,Coding,Summarization
+perplexity,Perplexity Sonar,Search,Lightweight,Fast,Cheap
+anthropic,Claude 3.5 Haiku,Fast,Enterprise,Long-prompt,Cheap
+mistral,Codestral-Embed,Code,Database,Search,Developer
+xai,Grok 3 Fast,Fast,Enterprise,Speed,Premium
+deepseek,Grok 2 Vision,Visual,Math,Documents,Understanding
+zai,Gemini Embedding 001,Embeddings,Multilingual,Code,High-dimensional
+meta,Mistral Small,Bulk,Efficient,Classification,Affordable
+openai,Mistral Codestral,Code,Low-latency,Languages,Fill-in
+mistral,Gemini 2.5 Flash Image Preview,Hybrid,Conversational,Editing,Interleaved
+openai,GLM-4.5-Air,MoE,Flagship,Streamlined,Agent
+stealth,Qwen3-235B,MoE,Math,Logic,Context
+meta,Text Embedding ADA-002,Legacy,Similarity,Versatile,Used
+perplexity,DeepSeek R1,Reasoning,Accuracy,Transparent,Agent
+xai,Claude 3 Haiku,Fast,Instant,Speed,Affordable
+google,Grok 3 Mini Fast,Mini,Logic,Throughput,Cost
+mistral,Morph V3 Large,Code,Auto-implement,Speed,IO
+mistral,Qwen3-30B,Advanced,Reasoning,Multilingual,Instruction
+google,Gemma 2 9B,Open-source,Parameters,Inference,Efficient
+zai,Morph V3 Fast,Code,Real-time,IO,Throughput
+alibaba,Nova Micro,Text,Latency,Cost,Throughput
+openai,GPT-4 Turbo (128k),Knowledge,Accuracy,Context,Vision
+deepseek,Mistral Embed,Embeddings,Search,Clustering,RAG
+anthropic,Titan Text Embed V2,Efficient,Lightweight,Dimensions,Cost
+openai,DeepSeek R1 Distill (70B),Distilled,Reinforcement,Multilingual,Stable
+openai,Ministral 3B,Compact,On-device,Latency,Efficient
+openai,Qwen3-32B,MoE,Tool-use,Reasoning,Production
+alibaba,Mistral Large,Complex,Reasoning,Code,Agent
+anthropic,Magistral Small,Reasoning,Transparent,Multilingual,Verification
+openai,Command A,Top-tier,Tools,RAG,Multilingual
+xai,DeepSeek V3.1 Base,Improved,Stability,Enhanced,Foundation
+vercel,Nova Lite,Multimodal,Fast,Support,Throughput
+anthropic,GLM-4.5V,Vision,MoE,Techniques,Reasoning
+openai,Sonar Reasoning,Answers,Explanations,Grounded,Analytical
+amazon,Llama 3.2 1B,Tiny,Multilingual,Summarization,Rewriting
+moonshotai,Pixtral Large,Multimodal,Documents,Charts,Text
+meituan,Sonar Reasoning Pro,Premium,Search,Answers,Reasoning
+meta,Mixtral 8×22B Instruct,MoE,Instruction,Open-source,Fireworks
+meta,Llama 3.2 3B,On-device,Multilingual,Summarization,Rewrite
+vercel,Devstral Small,Agentic,Tool-using,Codebases,Files
+alibaba,Mistral Medium,Cost-effective,Performance,Cheap,Versatile
+deepseek,OpenAI o1,Reasoning,Problem-solving,Safety,
+xai,Ministral 8B,Edge,Powerful,Inference,Tasks
+morph,Llama 3.2 90B,Vision,Reasoning,Captioning,QA
+alibaba,Llama 3.1 70B,Context,Multilingual,Reasoning,Model
+google,Mercury Coder Small,Generation,Debugging,Refactoring,Latency
+morph,Text-Embedding-005,English,Embeddings,Search,Vertex
+amazon,Command R,Conversational,Context,Accuracy,Production
+openai,Magistral Medium,Reasoning,Understanding,Cross-lingual,Complex
+mistral,Embed v4.0,Embeddings,Classification,Versatile,Dimensional
+amazon,Llama 3.2 11B,Vision,QA,Captioning,Reasoning
+deepseek,Command R+,Conversational,Context,Performant,Production
+mistral,Voyage 3.5 Lite,Latency,Cost-effective,General,Multilingual
+alibaba,Voyage Code 2,Code,Embeddings,Generation,Search
+mistral,Voyage Law 2,Legal,RAG,Jurisdiction,Retrieval
+mistral,Voyage Finance 2,Finance,RAG,Domain,Retrieval
+cohere,Text Multilingual Embedding 002,Cross-lingual,Languages,Nuance,Search
+deepseek,Voyage 3.5,General,Retrieval,Balanced,RAG
+amazon,Voyage Code 3,Code,Generation,Search,Developer
+zai,Voyage 3 Large,Quality,Multilingual,Retrieval,Larger
+perplexity,Llama 3 8B,Open-source,Instruction,Inference,Accelerated
+meta,GPT-3.5 Turbo Instruct,Legacy,Completion,Compatibility,Stable
+mistral,Llama 3 70B,Open-source,Instruction,Serving,Performance
+perplexity,mistral/pixtral-large,Document chart,Image-grounded,Table OCR,Multimodal RAG
+mistral,perplexity/sonar-reasoning-pro,Search-grounded answers,Multi-hop retrieval,Source citations,Stepwise output
+meta,mistral/mixtral-8x22b-instruct,Strong instruction,Code generation,Function tool,Long-context
+mistral,meta/llama-3.2-3b,Lightweight chat,Multilingual responses,Summarization rewrite,classification extraction
+mistral,mistral/devstral-small,Agentic coding,Multi-file edits,Test generation,Codebase navigation
+openai,mistral/mistral-medium,Balanced general,RAG-friendly generation,Tool use,Multilingual task
+mistral,openai/o1,Advanced step-by-step,Math science,Planning decomposition,Coding with
+meta,mistral/ministral-8b,Fast small-footprint,Few-shot task,Tool function,coding assistance
+meta,meta/llama-3.2-90b,Vision-language QA,Complex visual,Document image,Detailed captioning
+inception,meta/llama-3.1-70b,High-quality long-form,Complex logic,Multilingual understanding,Code generation
+google,inception/mercury-coder-small,Rapid code,Refactor explain,Bug localization,Project scaffolding
+cohere,google/text-embedding-005,High-quality text,Code-aware semantics,Semantic search,Clustering similarity
+mistral,cohere/command-r,Long-context conversational,RAG orchestration,Tool API,Multilingual customer
+cohere,mistral/magistral-medium,Transparent stepwise,Logic math,Structured explanations,Error checking
+meta,cohere/embed-v4.0,Text image,Cross-modal search,Classification vectors,Multilingual retrieval
+cohere,meta/llama-3.2-11b,Mid-size vision-language,Charts tables,Image text,Grounded explanations
+voyage,cohere/command-r-plus,Higher-accuracy long-context,RAG +,Complex multi-step,Enterprise dialogue
+voyage,voyage/voyage-3.5-lite,Low-latency embeddings,Multilingual retrieval,Matryoshka dimensions,RAG search
+voyage,voyage/voyage-code-2,Code-focused embeddings,Function snippet,Repository similarity,Semantic code
+voyage,voyage/voyage-law-2,Legal-domain embeddings,Clause provision,Citation precedent,Cross-jurisdiction similarity
+google,voyage/voyage-finance-2,Finance-domain embeddings,Ticker entity,Numeric-aware similarity,Report filing
+voyage,google/text-multilingual-embedding-002,Multilingual embeddings,Cross-lingual alignment,Semantic search,Clustering across
+voyage,voyage/voyage-3.5,SOTA general,Multilingual retrieval,Flexible dimensions,RAG-optimized similarity
+voyage,voyage/voyage-code-3,Next-gen code,Improved snippet,Repo-level search,Code QA
+meta,voyage/voyage-3-large,Top-tier retrieval,Multilingual general,Flexible vector,Long-context support
+openai,meta/llama-3-8b,Open-source chat,Summarization rewrite,,Entry-level coding
+meta,openai/gpt-3.5-turbo-instruct,Completion-style instruct,Data extraction,Rewrite editing,Lightweight coding
+,meta/llama-3-70b,Strong instruction,Advanced,Code generation,Multilingual tasks

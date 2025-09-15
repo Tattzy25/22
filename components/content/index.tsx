@@ -62,6 +62,8 @@ export function ContentArea({ activeContent }: ContentAreaProps) {
       return <MultiAgentContent />
     case 'admin-panel':
       return <AdminPanel />
+    case 'admin':
+      return <div></div>
     default:
       return <HomeContent />
   }

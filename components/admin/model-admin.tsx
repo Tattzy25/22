@@ -218,7 +218,6 @@ export default function ModelAdmin({ onFormChange }: ModelAdminProps) {
                 name={formData.name || "Model Name"}
                 provider={formData.provider || "Provider"}
                 capabilities={capabilities.length > 0 ? capabilities : ["Capability 1", "Capability 2", "Capability 3", "Capability 4"]}
-                tooltip={formData.tooltip || "Click for more details about this model"}
                 status={formData.status}
                 onTry={() => {}}
               />

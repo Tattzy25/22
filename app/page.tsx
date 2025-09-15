@@ -23,7 +23,7 @@ export type ContentType =
   | 'community' | 'settings' | 'automation' | 'character-builder'
   | 'widget-generator' | 'media-studio' | 'game-builder' | 'api-manager'
   | 'design-engineering' | 'sales-marketing' | 'control-panel' | 'agent-live'
-  | 'multi-agent' | 'admin-panel'
+  | 'multi-agent' | 'admin-panel' | 'admin'
 
 export default function Page() {
   const [activeContent, setActiveContent] = useState<ContentType>('home')
@@ -35,7 +35,7 @@ export default function Page() {
       const validRoutes: ContentType[] = [
         'home', 'models', 'playground', 'builder', 'community', 'settings',
         'automation', 'character-builder', 'widget-generator', 'media-studio',
-        'game-builder', 'api-manager', 'design-engineering', 'sales-marketing', 'control-panel', 'agent-live', 'admin-panel'
+        'game-builder', 'api-manager', 'design-engineering', 'sales-marketing', 'control-panel', 'agent-live', 'admin-panel', 'admin'
       ]
 
       if (hash && validRoutes.includes(hash as ContentType)) {
@@ -69,7 +69,8 @@ export default function Page() {
       'control-panel': 'Control Panel',
       'agent-live': 'AI Agent Live',
       'multi-agent': 'Multi-Agent Automations',
-      'admin-panel': 'Admin Panel'
+      'admin-panel': 'Admin Panel',
+      'admin': 'Admin'
     }
     return titles[content] || 'Home'
   }
