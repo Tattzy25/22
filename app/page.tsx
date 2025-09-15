@@ -20,10 +20,10 @@ import { ContentArea } from "@/components/content"
 
 export type ContentType =
   | 'home' | 'models' | 'playground' | 'builder'
-  | 'community' | 'settings' | 'automation' | 'character-builder'
-  | 'widget-generator' | 'media-studio' | 'game-builder' | 'api-manager'
+  | 'community' | 'settings' | 'character-builder'
+  | 'media-studio' | 'game-builder' | 'api-manager'
   | 'design-engineering' | 'sales-marketing' | 'control-panel' | 'agent-live'
-  | 'multi-agent' | 'admin-panel' | 'admin'
+  | 'multi-agent' | 'admin-panel'
 
 export default function Page() {
   const [activeContent, setActiveContent] = useState<ContentType>('home')
@@ -34,8 +34,8 @@ export default function Page() {
       const hash = window.location.hash.replace('#', '')
       const validRoutes: ContentType[] = [
         'home', 'models', 'playground', 'builder', 'community', 'settings',
-        'automation', 'character-builder', 'widget-generator', 'media-studio',
-        'game-builder', 'api-manager', 'design-engineering', 'sales-marketing', 'control-panel', 'agent-live', 'admin-panel', 'admin'
+        'character-builder', 'media-studio',
+        'game-builder', 'api-manager', 'design-engineering', 'sales-marketing', 'control-panel', 'agent-live', 'admin-panel'
       ]
 
       if (hash && validRoutes.includes(hash as ContentType)) {
@@ -58,9 +58,7 @@ export default function Page() {
       'builder': 'Builder',
       'community': 'Community',
       'settings': 'Settings',
-      'automation': 'Automation',
       'character-builder': 'Character Builder',
-      'widget-generator': 'Widget Generator',
       'media-studio': 'Media Studio',
       'game-builder': 'Game Builder',
       'api-manager': 'API Manager',
@@ -69,8 +67,7 @@ export default function Page() {
       'control-panel': 'Control Panel',
       'agent-live': 'AI Agent Live',
       'multi-agent': 'Multi-Agent Automations',
-      'admin-panel': 'Admin Panel',
-      'admin': 'Admin'
+      'admin-panel': 'Admin Panel'
     }
     return titles[content] || 'Home'
   }

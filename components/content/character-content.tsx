@@ -132,9 +132,30 @@ export function CharacterContent() {
     }
   }
 
-  const saveCharacter = () => {
-    // In a real implementation, this would save to a database
-    console.log("Saving character:", character)
+  const saveCharacter = async () => {
+    try {
+      const response = await fetch('/api/characters', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(character),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save character');
+      }
+
+      const savedCharacter = await response.json();
+      setCharacter(savedCharacter);
+      
+      // Show success notification
+      console.log('Character saved successfully:', savedCharacter.id);
+    } catch (error) {
+      console.error('Error saving character:', error);
+      // Show error notification to user
+    }
   }
 
   return (

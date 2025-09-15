@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
-import { GameTemplate, GameConfig, GameScene, GameElement, gameTemplates } from "./types"
+import { GameTemplate, GameConfig, GameScene, GameElement } from "./types"
 
 export function useGame() {
   const [selectedTemplate, setSelectedTemplate] = useState<GameTemplate | null>(null)
@@ -104,18 +104,65 @@ export function useGame() {
     setSelectedScene(newScene)
   }
 
-  const saveGame = () => {
-    console.log('Saving game:', gameConfig)
-    // In a real implementation, this would save to a database
+  const saveGame = async () => {
+    try {
+      const response = await fetch('/api/games', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(gameConfig),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save game');
+      }
+
+      const savedGame = await response.json();
+      console.log('Game saved successfully:', savedGame.id);
+      return savedGame;
+    } catch (error) {
+      console.error('Error saving game:', error);
+      throw error;
+    }
   }
 
   const previewGame = () => {
     setIsPreviewOpen(true)
   }
 
-  const exportGame = () => {
-    console.log('Exporting game code...')
-    // In a real implementation, this would generate embeddable code
+  const exportGame = async () => {
+    try {
+      const response = await fetch('/api/games/export', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ gameId: gameConfig.id }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to export game');
+      }
+
+      const exportData = await response.json();
+      
+      // Download the generated code
+      const blob = new Blob([exportData.code], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${gameConfig.title || 'game'}.html`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      console.log('Game exported successfully');
+    } catch (error) {
+      console.error('Error exporting game:', error);
+      throw error;
+    }
   }
 
   return {

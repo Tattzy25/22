@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useRef } from "react"
+import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
@@ -20,18 +20,13 @@ import {
   Download,
   Wand2,
   Sparkles,
-  Volume2,
   Clock,
   Palette,
   Zap,
-  Star,
   Heart,
-  Share,
-  Save,
-  RefreshCw,
-  Settings
+  Share
 } from "lucide-react"
-import { MediaGenerationService, GeneratedImage, GeneratedMusic } from "@/lib/media-generation"
+import { MediaGenerationService } from "@/lib/media-generation"
 
 interface MusicGeneration {
   id: string
@@ -570,9 +565,21 @@ export function MediaContent() {
 
                           {generation.status === 'completed' && generation.imageUrl && (
                             <div className="space-y-3">
-                              <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                                <ImageIcon className="h-8 w-8 text-muted-foreground" />
-                                {/* In a real implementation, this would be an img tag */}
+                              <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
+                                <Image 
+                                  src={generation.imageUrl} 
+                                  alt={generation.prompt}
+                                  fill
+                                  className="object-cover"
+                                  onError={(e) => {
+                                    // Fallback to placeholder if image fails to load
+                                    e.currentTarget.style.display = 'none';
+                                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                                  }}
+                                />
+                                <div className="hidden w-full h-full flex items-center justify-center absolute inset-0">
+                                  <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                                </div>
                               </div>
                               <div className="flex items-center gap-2">
                                 <Button

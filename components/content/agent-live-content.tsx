@@ -45,11 +45,25 @@ interface AgentConfig {
 interface LiveSession {
   id: string
   agentId: string
-  status: 'active' | 'paused' | 'stopped'
+  status: 'active' | 'paused' | 'stopped' | 'error'
   startTime: Date
   visitorCount: number
   messageCount: number
   url: string
+  character?: {
+    name: string
+    personality: string
+    model: string
+  }
+  config?: {
+    name: string
+    personality: string
+    model: string
+    systemPrompt: string
+    temperature: number
+    maxTokens: number
+    isPublic: boolean
+  }
 }
 
 const personalities = [
@@ -96,7 +110,38 @@ export function AgentLiveContent() {
       url: `${typeof window !== 'undefined' ? window.location.origin : ''}/live/${config.name.toLowerCase().replace(/\s+/g, '-')}`
     }
     setLiveSessions(prev => [newSession, ...prev])
-    // In a real implementation, this would start the live session
+    
+    // Start the actual live session
+    initializeLiveSession(newSession);
+  }
+
+  const initializeLiveSession = async (session: LiveSession) => {
+    try {
+      const response = await fetch('/api/live-sessions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sessionId: session.id,
+          character: session.character,
+          config: session.config
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to initialize live session');
+      }
+
+      const sessionData = await response.json();
+      console.log('Live session initialized:', sessionData);
+    } catch (error) {
+      console.error('Error initializing live session:', error);
+      // Update session status to error
+      setLiveSessions(prev => prev.map(s =>
+        s.id === session.id ? { ...s, status: 'error' } : s
+      ));
+    }
   }
 
   const stopLiveSession = () => {

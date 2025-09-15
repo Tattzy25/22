@@ -82,20 +82,36 @@ Make it vivid and specific for high-quality music generation.`;
 
   static async generateMusic(description: string): Promise<GeneratedMusic> {
     try {
-      // For now, we'll simulate music generation since we don't have a direct music API
-      // In a real implementation, you'd use services like Suno AI, Udio, or similar
+      // Generate optimized music prompt
       const musicPrompt = await this.generateMusicPrompt(description);
 
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      // Call actual music generation API (Suno AI, Udio, or similar)
+      const response = await fetch('/api/generate/music', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: musicPrompt,
+          duration: 180,
+          style: 'auto'
+        }),
+      });
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Music generation failed');
+      }
+
+      const result = await response.json();
+      
       return {
-        id: `music_${Date.now()}`,
-        url: `https://example.com/generated-music-${Date.now()}.mp3`, // Placeholder
+        id: result.id || `music_${Date.now()}`,
+        url: result.audioUrl,
         prompt: musicPrompt,
-        duration: 180, // 3 minutes
+        duration: result.duration || 180,
         createdAt: new Date(),
-        model: 'music-gen-ai',
+        model: result.model || 'music-gen-ai',
       };
     } catch (error) {
       console.error('Failed to generate music:', error);

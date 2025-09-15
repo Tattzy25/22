@@ -129,44 +129,6 @@ const data = {
       ],
     },
     {
-      title: "Automation",
-      url: "#automation",
-      icon: Settings2,
-      items: [
-        {
-          title: "Workflows",
-          url: "#automation",
-        },
-        {
-          title: "Integrations",
-          url: "#automation",
-        },
-        {
-          title: "API Manager",
-          url: "#api-manager",
-        },
-      ],
-    },
-    {
-      title: "Widget Generator",
-      url: "#widget-generator",
-      icon: Frame,
-      items: [
-        {
-          title: "Widget Generator",
-          url: "#widget-generator",
-        },
-        {
-          title: "AI Agent Live",
-          url: "#agent-live",
-        },
-        {
-          title: "Multi-Agent Automations",
-          url: "#multi-agent",
-        },
-      ],
-    },
-    {
       title: "Community",
       url: "#community",
       icon: BookOpen,
@@ -243,11 +205,6 @@ const data = {
     {
       name: "Admin Panel",
       url: "#admin-panel",
-      icon: Settings2,
-    },
-    {
-      name: "Admin",
-      url: "#admin",
       icon: Settings2,
     },
   ],

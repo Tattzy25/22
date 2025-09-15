@@ -47,6 +47,7 @@ interface Agent {
     maxTokens: number
     systemPrompt: string
   }
+  lastResult?: Record<string, unknown>
 }
 
 interface MCPConnection {
@@ -73,7 +74,7 @@ interface MultiAgentWorkflow {
       outputs: Record<string, unknown>
     }>
   }
-  status: 'stopped' | 'running' | 'paused'
+  status: 'stopped' | 'running' | 'paused' | 'completed' | 'failed'
 }
 
 const availableModels = [
@@ -179,7 +180,7 @@ export function MultiAgentContent() {
     } : null)
   }
 
-  const runWorkflow = () => {
+  const runWorkflow = async () => {
     if (!selectedWorkflow) return
 
     setSelectedWorkflow(prev => prev ? {
@@ -188,14 +189,40 @@ export function MultiAgentContent() {
       agents: prev.agents.map(agent => ({ ...agent, status: 'active' }))
     } : null)
 
-    // Simulate workflow execution
-    setTimeout(() => {
+    try {
+      // Execute actual workflow through API
+      const response = await fetch('/api/workflows/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          workflowId: selectedWorkflow.id,
+          agents: selectedWorkflow.agents 
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Workflow execution failed')
+      }
+
+      const result = await response.json()
+      
       setSelectedWorkflow(prev => prev ? {
         ...prev,
-        status: 'stopped',
-        agents: prev.agents.map(agent => ({ ...agent, status: 'idle' }))
+        status: 'completed',
+        agents: prev.agents.map(agent => ({ 
+          ...agent, 
+          status: 'idle',
+          lastResult: result.agentResults?.[agent.id] 
+        }))
       } : null)
-    }, 5000)
+    } catch (error) {
+      console.error('Workflow execution error:', error)
+      setSelectedWorkflow(prev => prev ? {
+        ...prev,
+        status: 'failed',
+        agents: prev.agents.map(agent => ({ ...agent, status: 'error' }))
+      } : null)
+    }
   }
 
   const stopWorkflow = () => {

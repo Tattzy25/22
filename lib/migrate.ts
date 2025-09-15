@@ -48,8 +48,8 @@ async function runMigrations() {
     // Get list of migration files
     const migrationsDir = join(process.cwd(), 'migrations');
     const migrationFiles = [
-      '001_create_models_table_sqlite.sql',
-      '002_seed_models_data_sqlite.sql'
+      '001_create_models_table.sql',
+      '002_populate_models.sql'
     ];
 
     for (const file of migrationFiles) {
@@ -59,8 +59,21 @@ async function runMigrations() {
       try {
         const sql = readFileSync(filePath, 'utf-8');
 
-        // Execute the entire SQL file as one batch
-        await client.execute(sql);
+        // Clean and split SQL into individual statements
+        const statements = sql
+          .replace(/--.*$/gm, '') // Remove comments
+          .split(';')
+          .map(stmt => stmt.trim())
+          .filter(stmt => stmt.length > 0);
+
+        console.log(`Found ${statements.length} statements in ${file}`);
+
+        for (const statement of statements) {
+          if (statement.trim()) {
+            console.log(`Executing: ${statement.substring(0, 50)}...`);
+            await client.execute(statement);
+          }
+        }
 
         console.log(`✓ Migration ${file} completed successfully`);
       } catch (error) {

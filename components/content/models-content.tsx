@@ -82,35 +82,9 @@ export function ModelsContent() {
       setProviders(uniqueProviders)
     } catch (err) {
       console.error('Error loading models:', err)
-      // Fallback to demo data
-      const demoModels: AIModel[] = [
-        {
-          id: "gpt-4",
-          name: "GPT-4",
-          provider: "OpenAI",
-          description: "Most advanced GPT model with superior reasoning and creativity",
-          capabilities: ["Text Generation", "Code", "Analysis", "Creative Writing"],
-          pricing: { inputTokens: "$0.03/1K", outputTokens: "$0.06/1K" },
-          rating: 4.9,
-          contextWindow: 128000,
-          responseTime: "~2-3s",
-          status: "available" as const
-        },
-        {
-          id: "claude-3-opus",
-          name: "Claude 3 Opus",
-          provider: "Anthropic",
-          description: "Most capable Claude model for complex tasks and analysis",
-          capabilities: ["Analysis", "Research", "Long-form Content", "Math"],
-          pricing: { inputTokens: "$0.015/1K", outputTokens: "$0.075/1K" },
-          rating: 4.8,
-          contextWindow: 200000,
-          responseTime: "~2-4s",
-          status: "available" as const
-        }
-      ]
-      setModels(demoModels)
-      setProviders(['all', 'OpenAI', 'Anthropic'])
+      setError('Failed to load AI models. Please check your database connection.')
+      setModels([])
+      setProviders(['all'])
     } finally {
       setIsLoading(false)
     }
