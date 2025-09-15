@@ -1,6 +1,4 @@
-import { openai } from '@ai-sdk/openai';
-import { generateText } from 'ai';
-import OpenAI from 'openai';
+import type { HubModel } from './ai-hub-models';
 
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -16,10 +14,16 @@ export interface ChatSession {
 }
 
 export class AIChatService {
-  private static gatewayClient = new OpenAI({
-    baseURL: 'https://gateway.ai.vercel.com/v1',
-    apiKey: process.env.AI_GATEWAY_API_KEY
-  });
+  private static getApiUrl() {
+    // This ensures we use the full URL on the server-side.
+    // On the client-side, relative URLs are fine.
+    if (typeof window === 'undefined') {
+      const host = process.env.VERCEL_URL || 'localhost:3000';
+      const protocol = host.startsWith('localhost') ? 'http' : 'https';
+      return `${protocol}://${host}/api/v0/ai`;
+    }
+    return '/api/v0/ai';
+  }
 
   static async sendMessage(session: ChatSession, userMessage: string): Promise<string> {
     const messages: ChatMessage[] = [
@@ -28,16 +32,25 @@ export class AIChatService {
     ];
 
     try {
-      const completion = await this.gatewayClient.chat.completions.create({
-        model: session.model,
-        messages: messages.map(msg => ({
-          role: msg.role,
-          content: msg.content
-        })),
-        temperature: session.temperature || 0.7,
+      const response = await fetch(this.getApiUrl(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: session.model,
+          messages: messages,
+          stream: false,
+          temperature: session.temperature || 0.7,
+        }),
       });
 
-      return completion.choices[0]?.message?.content?.trim() || '';
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`API Error: ${response.status} ${errorText}`);
+        throw new Error(`Failed to get AI response. Status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      return result.text?.trim() || '';
     } catch (error) {
       console.error('Failed to get AI response:', error);
       throw new Error('Failed to get response from AI. Please try again.');
@@ -53,11 +66,23 @@ export class AIChatService {
     const prompt = `Generate a short, descriptive title (max 6 words) for a conversation that starts with: "${firstUserMessage.substring(0, 100)}"`;
 
     try {
-      const { text } = await generateText({
-        model: openai('gpt-4'),
-        prompt,
+      const response = await fetch(this.getApiUrl(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'openai:gpt-4', // Using a default model for title generation
+          prompt,
+          stream: false,
+        }),
       });
 
+       if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`API Error: ${response.status} ${errorText}`);
+        throw new Error(`Failed to generate title. Status: ${response.status}`);
+      }
+
+      const { text } = await response.json();
       return text.trim().replace(/^["']|["']$/g, ''); // Remove quotes if present
     } catch (error) {
       console.error('Failed to generate title:', error);
@@ -65,15 +90,27 @@ export class AIChatService {
     }
   }
 
-  static getAvailableModels() {
-    return [
-      { id: "gpt-4", name: "GPT-4", provider: "OpenAI", icon: "🤖", contextWindow: 8192 },
-      { id: "claude-3-opus", name: "Claude 3 Opus", provider: "Anthropic", icon: "🧠", contextWindow: 200000 },
-      { id: "gemini-pro", name: "Gemini Pro", provider: "Google", icon: "🌟", contextWindow: 32768 },
-      { id: "claude-3-haiku", name: "Claude 3 Haiku", provider: "Anthropic", icon: "⚡", contextWindow: 200000 },
-      { id: "gpt-3.5-turbo", name: "GPT-3.5 Turbo", provider: "OpenAI", icon: "🚀", contextWindow: 4096 },
-      { id: "command-r", name: "Command R", provider: "Cohere", icon: "🏢", contextWindow: 128000 }
-    ];
+  static async getAvailableModels() {
+     try {
+      const response = await fetch(this.getApiUrl());
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`API Error: ${response.status} ${errorText}`);
+        throw new Error(`Failed to fetch models. Status: ${response.status}`);
+      }
+      const models: HubModel[] = await response.json();
+      // The hub returns models with 'id', 'model', 'provider'. We adapt it here.
+      return models.map((m) => ({
+        id: m.id,
+        name: m.model.split('/').pop() ?? '', // e.g., 'gpt-4' from 'openai/gpt-4'
+        provider: m.provider,
+        icon: "🤖", // Placeholder icon
+        contextWindow: 16385, // Placeholder value
+      }));
+    } catch (error) {
+      console.error('Failed to fetch available models:', error);
+      return []; // Return empty array on failure
+    }
   }
 
   static estimateTokenCount(messages: ChatMessage[]): number {
@@ -90,11 +127,23 @@ export class AIChatService {
     const prompt = `Summarize this conversation in 2-3 sentences, capturing the main topics and key points discussed:\n\n${conversationText}`;
 
     try {
-      const { text } = await generateText({
-        model: openai('gpt-4'),
-        prompt,
+       const response = await fetch(this.getApiUrl(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'openai:gpt-4', // Using a default model for summarization
+          prompt,
+          stream: false,
+        }),
       });
 
+       if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`API Error: ${response.status} ${errorText}`);
+        throw new Error(`Failed to summarize. Status: ${response.status}`);
+      }
+
+      const { text } = await response.json();
       return text.trim();
     } catch (error) {
       console.error('Failed to summarize conversation:', error);

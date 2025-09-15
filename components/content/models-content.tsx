@@ -1,44 +1,25 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import type { HubModel } from "@/lib/ai-hub-models"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Search, Bot, Loader2 } from "lucide-react"
+import { Search, Loader2, Bot } from "lucide-react"
 import { ModelCard } from "@/components/models/model-card"
 
-interface APIModel {
-  id: string
-  name: string
-  display_name?: string | null
-  provider: string
-  capabilities: string[]
-  tooltip?: string
-  status: string
-  created_at: string
-  updated_at: string
-}
-
-interface AIModel {
-  id: string
-  name: string
-  provider: string
-  description: string
-  capabilities: string[]
-  pricing: {
-    inputTokens: string
-    outputTokens: string
-    monthlyFee?: string
-  }
-  rating: number
-  contextWindow: number
-  responseTime: string
-  status: 'available' | 'beta' | 'deprecated'
+// Simplified model type for the UI, derived from HubModel
+interface UIModel extends HubModel {
+  name: string;
+  // Add any additional UI-specific properties here if needed in the future
+  // For now, we'll add placeholder data required by ModelCard
+  capabilities: string[];
+  status: 'available' | 'unavailable' | 'idle';
 }
 
 export function ModelsContent() {
-  const [models, setModels] = useState<AIModel[]>([])
+  const [models, setModels] = useState<UIModel[]>([])
   const [providers, setProviders] = useState<string[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedProvider, setSelectedProvider] = useState("all")
@@ -54,25 +35,21 @@ export function ModelsContent() {
       setIsLoading(true)
       setError(null)
 
-      const response = await fetch('/api/models')
+      const response = await fetch('/api/v0/ai') // Fetch from the new central hub
       if (!response.ok) {
-        throw new Error('Failed to fetch models')
+        throw new Error(`Failed to fetch models: ${response.statusText}`)
       }
 
-      const modelsData = await response.json()
+      const modelsData: HubModel[] = await response.json()
 
-      // Transform to AIModel format
-      const transformedModels: AIModel[] = modelsData.map((model: APIModel) => ({
-        id: model.id,
-        name: model.display_name || model.name || 'Unknown Model',
-        provider: model.provider,
-        description: model.tooltip || '',
-        capabilities: model.capabilities,
-        pricing: { inputTokens: '', outputTokens: '' }, // Not in new schema
-        rating: 4.5, // Default
-        contextWindow: 0, // Not in new schema
-        responseTime: '', // Not in new schema
-        status: model.status === 'available' ? 'available' : 'unavailable' as const
+      // Transform HubModel to UIModel format, adding placeholder data
+      const transformedModels: UIModel[] = modelsData.map((model) => ({
+        ...model,
+        name: model.model.split('/').pop() ?? model.model, // Extract simple name
+        // Placeholder data as the new API doesn't provide this.
+        // This can be expanded in the hub later.
+        capabilities: ["Text Generation", "Chat", "Code"],
+        status: 'available'
       }))
 
       setModels(transformedModels)
@@ -80,9 +57,9 @@ export function ModelsContent() {
       // Extract unique providers
       const uniqueProviders = ['all', ...new Set(transformedModels.map(m => m.provider))]
       setProviders(uniqueProviders)
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error loading models:', err)
-      setError('Failed to load AI models. Please check your database connection.')
+      setError(err.message || 'Failed to load AI models.')
       setModels([])
       setProviders(['all'])
     } finally {
@@ -91,9 +68,9 @@ export function ModelsContent() {
   }
 
   const filteredModels = models.filter(model => {
-    const matchesSearch = model.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         model.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         model.capabilities.some((cap: string) => cap.toLowerCase().includes(searchTerm.toLowerCase()))
+    const modelName = model.model.split('/').pop() ?? model.model;
+    const matchesSearch = modelName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         model.provider.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesProvider = selectedProvider === "all" || model.provider.toLowerCase() === selectedProvider
     return matchesSearch && matchesProvider
   })
