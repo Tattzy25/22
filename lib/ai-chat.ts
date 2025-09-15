@@ -1,8 +1,6 @@
 import { openai } from '@ai-sdk/openai';
-import { anthropic } from '@ai-sdk/anthropic';
-import { google } from '@ai-sdk/google';
-import { cohere } from '@ai-sdk/cohere';
 import { generateText } from 'ai';
+import OpenAI from 'openai';
 
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -18,44 +16,28 @@ export interface ChatSession {
 }
 
 export class AIChatService {
+  private static gatewayClient = new OpenAI({
+    baseURL: 'https://gateway.ai.vercel.com/v1',
+    apiKey: process.env.AI_GATEWAY_API_KEY
+  });
+
   static async sendMessage(session: ChatSession, userMessage: string): Promise<string> {
     const messages: ChatMessage[] = [
       ...session.messages,
       { role: 'user', content: userMessage }
     ];
 
-    let model;
-    switch (session.model) {
-      case 'gpt-4':
-        model = openai('gpt-4');
-        break;
-      case 'gpt-3.5-turbo':
-        model = openai('gpt-3.5-turbo');
-        break;
-      case 'claude-3-opus':
-        model = anthropic('claude-3-opus');
-        break;
-      case 'claude-3-haiku':
-        model = anthropic('claude-3-haiku');
-        break;
-      case 'gemini-pro':
-        model = google('models/gemini-pro');
-        break;
-      case 'command-r':
-        model = cohere('command-r');
-        break;
-      default:
-        model = openai('gpt-4');
-    }
-
     try {
-      const { text } = await generateText({
-        model,
-        messages,
+      const completion = await this.gatewayClient.chat.completions.create({
+        model: session.model,
+        messages: messages.map(msg => ({
+          role: msg.role,
+          content: msg.content
+        })),
         temperature: session.temperature || 0.7,
       });
 
-      return text.trim();
+      return completion.choices[0]?.message?.content?.trim() || '';
     } catch (error) {
       console.error('Failed to get AI response:', error);
       throw new Error('Failed to get response from AI. Please try again.');

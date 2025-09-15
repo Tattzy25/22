@@ -75,9 +75,11 @@ async function runMigration(filePath: string) {
 
 async function runAllMigrations() {
   const migrations = [
-    'migrations/001_create_models_table_sqlite.sql',
-    'migrations/003_seed_categorization_data.sql',
-    'migrations/002_seed_models_data_sqlite_new.sql'
+    'migrations/sqlite/001_create_models_table_sqlite.sql',
+    'migrations/sqlite/003_seed_categorization_data.sql',
+    'migrations/sqlite/002_seed_models_data_sqlite_new.sql',
+    'migrations/sqlite/004_alter_models_schema.sql',
+    'migrations/sqlite/007_provider_specific_tables.sql'
   ];
 
   console.log('🚀 Starting database migrations...\n');

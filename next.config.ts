@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_DOMAIN: 'musarty.com',
     NEXT_PUBLIC_BASE_URL: process.env.NODE_ENV === 'production'
       ? 'https://musarty.com'
-      : 'http://localhost:3000'
+      : 'http://localhost:3002'
   },
 
   // Image optimization for custom domain

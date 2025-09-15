@@ -182,25 +182,28 @@ export function WidgetContent() {
   }
 
   const loadWidgetAnalytics = (widgetId: string) => {
-    // Mock analytics data
+    const widget = widgets.find(w => w.id === widgetId)
+    if (!widget) return
+
+    // Use real widget data for basic analytics, with placeholder for future detailed analytics
     setAnalytics({
       widgetId,
-      totalViews: Math.floor(Math.random() * 10000) + 1000,
-      totalInteractions: Math.floor(Math.random() * 1000) + 100,
-      conversionRate: Math.random() * 20 + 5,
-      avgSessionDuration: Math.random() * 300 + 60,
+      totalViews: widget.views,
+      totalInteractions: widget.interactions,
+      conversionRate: widget.views > 0 ? (widget.interactions / widget.views) * 100 : 0,
+      avgSessionDuration: 120, // Placeholder - will be implemented with real tracking
       topPages: [
-        { page: '/home', views: 450 },
-        { page: '/products', views: 320 },
-        { page: '/about', views: 280 },
-        { page: '/contact', views: 180 }
+        { page: '/home', views: Math.floor(widget.views * 0.4) },
+        { page: '/products', views: Math.floor(widget.views * 0.3) },
+        { page: '/about', views: Math.floor(widget.views * 0.2) },
+        { page: '/contact', views: Math.floor(widget.views * 0.1) }
       ],
       deviceBreakdown: {
-        mobile: 65,
+        mobile: 65, // Placeholder - will be implemented with real tracking
         desktop: 30,
         tablet: 5
       },
-      hourlyActivity: Array.from({ length: 24 }, () => Math.floor(Math.random() * 100))
+      hourlyActivity: Array.from({ length: 24 }, () => Math.floor(Math.random() * 50)) // Placeholder
     })
   }
 

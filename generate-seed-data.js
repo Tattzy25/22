@@ -229,65 +229,86 @@ ${assignments.emergingCategory.join(',\n')};`;
 }
 
 function generateSeedData() {
-  const csvPath = join(process.cwd(), 'components', 'models', 'Model_Catalog__Parsed_.csv');
+  const csvPath = join(process.cwd(), 'official-gateway-models.csv');
   const csvContent = readFileSync(csvPath, 'utf-8');
   const models = parseCSV(csvContent);
 
   console.log(`Found ${models.length} models in CSV`);
 
-  // Generate seed data
   const modelInserts = models.map(model => {
-    // Create human-readable ID from provider/model
-    const modelId = `${model.provider}-${model.model}`.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+    const id = model['Musarty ID'];
+    const name = model['Model ID'];
+    const displayName = model['Model Name'];
+    const provider = model['Provider'];
+    const contextStr = model['Context'];
+    const contextWindow = contextStr.includes('K') ? parseInt(contextStr.replace('K', '')) * 1000 : (contextStr.includes('M') ? parseInt(contextStr.replace('M', '')) * 1000000 : parseInt(contextStr) || 0);
+    const description = model['Description'];
+    const templateId = model['Template ID'];
 
-    // Estimate response time based on model type
-    let responseTime = '< 30 seconds';
-    if (model.model.includes('flash') || model.model.includes('lite') || model.model.includes('nano')) {
-      responseTime = '< 10 seconds';
-    } else if (model.category === 'Embedding') {
+    // Determine category from provider
+    let category = 'general';
+    if (provider === 'OpenAI') category = 'gpt';
+    else if (provider === 'Anthropic') category = 'claude';
+    else if (provider.includes('Google')) category = 'gemini';
+    else if (provider === 'xAI') category = 'grok';
+    else if (provider === 'Meta') category = 'llama';
+
+    // Determine cost tier
+    let costTier = 'premium';
+    if (description.toLowerCase().includes('cheap') || description.toLowerCase().includes('cost') || displayName.toLowerCase().includes('nano') || displayName.toLowerCase().includes('lite')) {
+      costTier = 'low_cost';
+    } else if (description.toLowerCase().includes('balanced') || displayName.toLowerCase().includes('mini')) {
+      costTier = 'mid_range';
+    }
+
+    // Response time
+    let responseTime = 'Standard';
+    if (model['Capabilities 1'].toLowerCase().includes('fast') || model['Capabilities 2'].toLowerCase().includes('fast') || description.toLowerCase().includes('fast') || displayName.toLowerCase().includes('flash')) {
+      responseTime = 'Fast';
+    } else if (displayName.toLowerCase().includes('instant')) {
       responseTime = 'Instant';
     }
 
-    // Create capabilities array from description keywords
-    const capabilities = [];
-    const desc = model.description.toLowerCase();
-    if (desc.includes('multimodal') || desc.includes('image') || desc.includes('video')) capabilities.push('Multimodal');
-    if (desc.includes('reasoning') || desc.includes('complex') || desc.includes('problem solving')) capabilities.push('Advanced reasoning');
-    if (desc.includes('coding') || desc.includes('code') || desc.includes('programming')) capabilities.push('Code generation');
-    if (desc.includes('fast') || desc.includes('speed') || desc.includes('quick')) capabilities.push('Fast responses');
-    if (desc.includes('cost') || desc.includes('efficient') || desc.includes('economy')) capabilities.push('Cost-effective');
-    if (capabilities.length === 0) capabilities.push('General purpose');
-
-    return `  ('${modelId}', '${model.model}', '${model.category}', '[${capabilities.map(c => '"' + c + '"').join(', ')}]', '${model.description.replace(/'/g, "''")}', '${model.context}', '${responseTime}')`;
+    return `INSERT OR IGNORE INTO models (id, name, display_name, category, description, context_window, response_time, cost_tier, is_active, sort_order) VALUES ('${id}', '${name}', '${displayName}', '${category}', '${description.replace(/'/g, "''")}', ${contextWindow}, '${responseTime}', '${costTier}', 1, 0);`;
   });
 
   const providerInserts = models.map(model => {
-    const modelId = `${model.provider}-${model.model}`.toLowerCase().replace(/[^a-z0-9-]/g, '-');
-    const provider = model.provider;
+    const modelId = model['Musarty ID'];
+    const providerName = model['Provider'];
+    const providerModelId = model['Model ID'];
+    const apiEndpoint = model['API Endpoint URL'];
 
-    return `  ('${modelId}', '${provider}', '{"inputTokens": "${model.input_per_m || ''}", "outputTokens": "${model.output_per_m || ''}", "cacheRead": "${model.cache_read_per_m || ''}", "cacheWrite": "${model.cache_write_per_m || ''}"}', 1, 1)`;
+    return `INSERT OR IGNORE INTO model_providers (model_id, provider_name, provider_model_id, api_endpoint, auth_type, priority, is_active) VALUES ('${modelId}', '${providerName}', '${providerModelId}', '${apiEndpoint}', 'oidc', 1, 1);`;
   });
 
-  // Generate categorization assignments
-  const categorizationInserts = generateCategorizationAssignments(models);
+  const capabilityInserts = [];
+  models.forEach(model => {
+    const modelId = model['Musarty ID'];
+    for (let i = 1; i <= 4; i++) {
+      const cap = model[`Capabilities ${i}`];
+      if (cap && cap.trim()) {
+        capabilityInserts.push(`INSERT OR IGNORE INTO model_capabilities (model_id, capability) VALUES ('${modelId}', '${cap.trim()}');`);
+      }
+    }
+  });
 
-  const output = `-- Seed data for AI Gateway models (from CSV data)
--- NOTE: This seed data is from the actual Model_Catalog__Parsed_.csv file
--- Models and providers listed here are from the official catalog
+  const output = `-- Import AI Gateway models from CSV
+-- Generated from official-gateway-models.csv
 
--- Insert unique models
-INSERT OR IGNORE INTO models (id, name, category, capabilities, description, context_window, response_time) VALUES
-${modelInserts.join(',\n')};\n\n-- Insert model-provider relationships
-INSERT OR IGNORE INTO model_providers (model_id, provider, pricing, priority, is_active) VALUES
-${providerInserts.join(',\n')};\n\n${categorizationInserts}`;
+${modelInserts.join('\n')}
 
-  console.log('\nGenerated seed data for', models.length, 'models');
+${providerInserts.join('\n')}
+
+${capabilityInserts.join('\n')}
+`;
+
+  console.log('\nGenerated import data for', models.length, 'models');
   return output;
 }
 
 // Generate and save the seed data
 const seedData = generateSeedData();
-const outputPath = join(process.cwd(), 'migrations', '002_seed_models_data_sqlite_new.sql');
+const outputPath = join(process.cwd(), 'migrations', 'sqlite', '006_import_gateway_models.sql');
 
 import { writeFileSync } from 'fs';
 writeFileSync(outputPath, seedData);
