@@ -5,21 +5,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { X, Plus, Save } from "lucide-react";
-import { turso } from "@/lib/turso";
+import { ModelCard } from "@/components/models/model-card";
+import { Save } from "lucide-react";
 
 interface ModelFormData {
+  id?: string;
   name: string;
   provider: string;
-  category: string;
-  capabilities: string[];
-  description: string;
-  contextWindow: string;
-  responseTime: string;
-  inputTokens: string;
-  outputTokens: string;
+  capability1: string;
+  capability2: string;
+  capability3: string;
+  capability4: string;
+  tooltip: string;
+  status: 'available' | 'unavailable' | 'idle';
+  publish: boolean;
 }
 
 interface ModelAdminProps {
@@ -30,46 +32,20 @@ export default function ModelAdmin({ onFormChange }: ModelAdminProps) {
   const [formData, setFormData] = useState<ModelFormData>({
     name: "",
     provider: "",
-    category: "",
-    capabilities: [],
-    description: "",
-    contextWindow: "",
-    responseTime: "",
-    inputTokens: "",
-    outputTokens: "",
+    capability1: "",
+    capability2: "",
+    capability3: "",
+    capability4: "",
+    tooltip: "",
+    status: 'available',
+    publish: false,
   });
-  const [newCapability, setNewCapability] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
 
-  const handleInputChange = (field: keyof ModelFormData, value: string) => {
+  const handleInputChange = (field: keyof ModelFormData, value: string | boolean) => {
     setFormData(prev => {
       const newData = { ...prev, [field]: value }
-      onFormChange?.(newData)
-      return newData
-    })
-  }
-
-  const addCapability = () => {
-    if (newCapability.trim() && !formData.capabilities.includes(newCapability.trim())) {
-      setFormData(prev => {
-        const newData = {
-          ...prev,
-          capabilities: [...prev.capabilities, newCapability.trim()]
-        }
-        onFormChange?.(newData)
-        return newData
-      })
-      setNewCapability("")
-    }
-  }
-
-  const removeCapability = (capability: string) => {
-    setFormData(prev => {
-      const newData = {
-        ...prev,
-        capabilities: prev.capabilities.filter(c => c !== capability)
-      }
       onFormChange?.(newData)
       return newData
     })
@@ -81,79 +57,30 @@ export default function ModelAdmin({ onFormChange }: ModelAdminProps) {
     setMessage("");
 
     try {
-      // First, check if model exists, if not create it
-      const existingModelResult = await turso.execute({
-        sql: "SELECT id FROM models WHERE name = ?",
-        args: [formData.name],
+      const payload = {
+        id: formData.id, // For updates
+        name: formData.name,
+        provider: formData.provider,
+        capability1: formData.capability1,
+        capability2: formData.capability2,
+        capability3: formData.capability3,
+        capability4: formData.capability4,
+        tooltip: formData.tooltip,
+        status: formData.status,
+        publish: formData.publish
+      };
+
+      const response = await fetch('/api/models', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
 
-      let modelId: string;
-
-      if (existingModelResult.rows.length === 0) {
-        // Create new model
-        const newModelResult = await turso.execute({
-          sql: `INSERT INTO models (name, category, capabilities, description, context_window, response_time)
-                VALUES (?, ?, ?, ?, ?, ?) RETURNING id`,
-          args: [
-            formData.name,
-            formData.category,
-            JSON.stringify(formData.capabilities),
-            formData.description,
-            formData.contextWindow,
-            formData.responseTime,
-          ],
-        });
-
-        if (newModelResult.rows.length === 0) {
-          throw new Error("Failed to create model");
-        }
-        modelId = newModelResult.rows[0].id as string;
-      } else {
-        // Update existing model
-        modelId = existingModelResult.rows[0].id as string;
-        await turso.execute({
-          sql: `UPDATE models SET category = ?, capabilities = ?, description = ?, context_window = ?, response_time = ?
-                WHERE id = ?`,
-          args: [
-            formData.category,
-            JSON.stringify(formData.capabilities),
-            formData.description,
-            formData.contextWindow,
-            formData.responseTime,
-            modelId,
-          ],
-        });
+      if (!response.ok) {
+        throw new Error('Failed to save model');
       }
 
-      // Create or update model-provider relationship
-      await turso.execute({
-        sql: `INSERT OR REPLACE INTO model_providers (model_id, provider, pricing, priority, is_active)
-              VALUES (?, ?, ?, ?, ?)`,
-        args: [
-          modelId,
-          formData.provider,
-          JSON.stringify({
-            inputTokens: formData.inputTokens,
-            outputTokens: formData.outputTokens,
-          }),
-          1, // Default priority
-          true, // is_active
-        ],
-      });
-
       setMessage("Model saved successfully!");
-      // Reset form
-      setFormData({
-        name: "",
-        provider: "",
-        category: "",
-        capabilities: [],
-        description: "",
-        contextWindow: "",
-        responseTime: "",
-        inputTokens: "",
-        outputTokens: "",
-      });
     } catch (error) {
       console.error('Error saving model:', error);
       setMessage("Error saving model. Please try again.");
@@ -162,151 +89,143 @@ export default function ModelAdmin({ onFormChange }: ModelAdminProps) {
     }
   };
 
+  const capabilities = [formData.capability1, formData.capability2, formData.capability3, formData.capability4].filter(Boolean);
+
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">AI Model Admin Panel</CardTitle>
-          <CardDescription>
-            Add or update AI models and their provider configurations. This will create the model cards displayed to users.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="container mx-auto p-6 max-w-7xl">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left Pane: Form */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold">New / Edit Model</CardTitle>
+            <CardDescription>
+              Configure the model details. Changes will be reflected in the preview on the right.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Model Name *</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => handleInputChange('name', e.target.value)}
+                    placeholder="e.g., GPT-4"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="provider">Provider *</Label>
+                  <Input
+                    id="provider"
+                    value={formData.provider}
+                    onChange={(e) => handleInputChange('provider', e.target.value)}
+                    placeholder="e.g., OpenAI"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2 !mt-px">
+                <Label>Capabilities</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input
+                    value={formData.capability1}
+                    onChange={(e) => handleInputChange('capability1', e.target.value)}
+                    placeholder="Capability 1"
+                  />
+                  <Input
+                    value={formData.capability2}
+                    onChange={(e) => handleInputChange('capability2', e.target.value)}
+                    placeholder="Capability 2"
+                  />
+                  <Input
+                    value={formData.capability3}
+                    onChange={(e) => handleInputChange('capability3', e.target.value)}
+                    placeholder="Capability 3"
+                  />
+                  <Input
+                    value={formData.capability4}
+                    onChange={(e) => handleInputChange('capability4', e.target.value)}
+                    placeholder="Capability 4"
+                  />
+                </div>
+              </div>
+
               <div className="space-y-2">
-                <Label htmlFor="name">Model Name *</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
-                  placeholder="e.g., GPT-4, Claude 3 Opus"
-                  required
+                <Label htmlFor="tooltip">Tooltip / More Description</Label>
+                <Textarea
+                  id="tooltip"
+                  value={formData.tooltip}
+                  onChange={(e) => handleInputChange('tooltip', e.target.value)}
+                  placeholder="Additional information about the model..."
+                  rows={3}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="provider">Provider *</Label>
-                <Input
-                  id="provider"
-                  value={formData.provider}
-                  onChange={(e) => handleInputChange('provider', e.target.value)}
-                  placeholder="e.g., OpenAI, Anthropic, AI Gateway"
-                  required
-                />
+                <Label htmlFor="status">Status</Label>
+                <Select value={formData.status} onValueChange={(value: 'available' | 'unavailable' | 'idle') => handleInputChange('status', value)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="available">Available</SelectItem>
+                    <SelectItem value="unavailable">Unavailable</SelectItem>
+                    <SelectItem value="idle">Idle</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
-              <Input
-                id="category"
-                value={formData.category}
-                onChange={(e) => handleInputChange('category', e.target.value)}
-                placeholder="e.g., General/Reasoning, Coding/Code-Assist, Embedding"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Capabilities</Label>
-              <div className="flex gap-2">
-                <Input
-                  value={newCapability}
-                  onChange={(e) => setNewCapability(e.target.value)}
-                  placeholder="Add a capability..."
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addCapability())}
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="publish"
+                  checked={formData.publish}
+                  onCheckedChange={(checked) => handleInputChange('publish', checked)}
                 />
-                <Button type="button" onClick={addCapability} size="sm">
-                  <Plus className="h-4 w-4" />
+                <Label htmlFor="publish">Publish (show on All Models page)</Label>
+              </div>
+
+              <div className="flex gap-4">
+                <Button type="submit" disabled={isSubmitting} className="flex items-center gap-2">
+                  <Save className="h-4 w-4" />
+                  {isSubmitting ? "Saving..." : "Save"}
                 </Button>
               </div>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {formData.capabilities.map((capability, index) => (
-                  <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                    {capability}
-                    <button
-                      type="button"
-                      onClick={() => removeCapability(capability)}
-                      className="ml-1 hover:bg-destructive hover:text-destructive-foreground rounded-full p-0.5"
-                      aria-label={`Remove ${capability} capability`}
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </Badge>
-                ))}
-              </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
-                placeholder="Describe what this model does..."
-                rows={3}
+              {message && (
+                <div className={`p-3 rounded-md ${message.includes('Error') ? 'bg-destructive/10 text-destructive' : 'bg-green-50 text-green-700'}`}>
+                  {message}
+                </div>
+              )}
+            </form>
+          </CardContent>
+        </Card>
+
+        {/* Right Pane: Preview */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Live Preview</CardTitle>
+            <CardDescription>
+              This is how the model card will appear to users.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex justify-center">
+              <ModelCard
+                name={formData.name || "Model Name"}
+                provider={formData.provider || "Provider"}
+                capabilities={capabilities.length > 0 ? capabilities : ["Capability 1", "Capability 2", "Capability 3", "Capability 4"]}
+                tooltip={formData.tooltip || "Click for more details about this model"}
+                status={formData.status}
+                onTry={() => {}}
               />
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="contextWindow">Context Window</Label>
-                <Input
-                  id="contextWindow"
-                  value={formData.contextWindow}
-                  onChange={(e) => handleInputChange('contextWindow', e.target.value)}
-                  placeholder="e.g., 128K tokens, 2M tokens"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="responseTime">Response Time</Label>
-                <Input
-                  id="responseTime"
-                  value={formData.responseTime}
-                  onChange={(e) => handleInputChange('responseTime', e.target.value)}
-                  placeholder="e.g., < 30 seconds, Fast, Very Fast"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="inputTokens">Input Token Pricing</Label>
-                <Input
-                  id="inputTokens"
-                  value={formData.inputTokens}
-                  onChange={(e) => handleInputChange('inputTokens', e.target.value)}
-                  placeholder="e.g., $0.03/1K tokens"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="outputTokens">Output Token Pricing</Label>
-                <Input
-                  id="outputTokens"
-                  value={formData.outputTokens}
-                  onChange={(e) => handleInputChange('outputTokens', e.target.value)}
-                  placeholder="e.g., $0.06/1K tokens"
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-4">
-              <Button type="submit" disabled={isSubmitting} className="flex items-center gap-2">
-                <Save className="h-4 w-4" />
-                {isSubmitting ? "Saving..." : "Save Model"}
-              </Button>
-            </div>
-
-            {message && (
-              <div className={`p-3 rounded-md ${message.includes('Error') ? 'bg-destructive/10 text-destructive' : 'bg-green-50 text-green-700'}`}>
-                {message}
-              </div>
-            )}
-          </form>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

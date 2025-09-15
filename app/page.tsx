@@ -17,7 +17,6 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { ContentArea } from "@/components/content"
-import { EditablePageWrapper } from "@/components/admin/editable-page-wrapper"
 
 export type ContentType =
   | 'home' | 'models' | 'playground' | 'builder'
@@ -101,9 +100,7 @@ export default function Page() {
             </Breadcrumb>
           </div>
         </header>
-        <EditablePageWrapper pageId={activeContent}>
-          <ContentArea activeContent={activeContent} />
-        </EditablePageWrapper>
+        <ContentArea activeContent={activeContent} />
       </SidebarInset>
     </SidebarProvider>
   )

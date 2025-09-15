@@ -1,14 +1,23 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
-import { Search, Bot, Zap, ExternalLink, Loader2, Settings, Palette, Type, Image, Eye, X, Info } from "lucide-react"
-import { turso } from "@/lib/turso"
+import { Search, Bot, Loader2 } from "lucide-react"
+import { ModelCard } from "@/components/models/model-card"
+
+interface APIModel {
+  id: string
+  name: string
+  provider: string
+  capabilities: string[]
+  tooltip?: string
+  status: string
+  created_at: string
+  updated_at: string
+}
 
 interface AIModel {
   id: string
@@ -34,51 +43,6 @@ export function ModelsContent() {
   const [selectedProvider, setSelectedProvider] = useState("all")
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  
-  // Admin panel state
-  const [showAdminPanel, setShowAdminPanel] = useState(false)
-  
-  // Card customization state
-  const [cardDesign, setCardDesign] = useState({
-    // Typography
-    titleFont: 'Inter',
-    titleSize: '18px',
-    titleColor: '#1f2937',
-    titleWeight: '600',
-    
-    subtitleFont: 'Inter',
-    subtitleSize: '14px',
-    subtitleColor: '#6b7280',
-    
-    descriptionFont: 'Inter',
-    descriptionSize: '14px',
-    descriptionColor: '#4b5563',
-    
-    // Layout
-    backgroundColor: '#ffffff',
-    borderRadius: '8px',
-    borderColor: '#e5e7eb',
-    borderWidth: '1px',
-    
-    // Spacing
-    padding: '16px',
-    
-    // Effects
-    shadow: 'shadow-md',
-    hoverEffect: true,
-    
-    // Content placeholders
-    placeholders: {
-      icon: '🤖',
-      title: 'Model Name',
-      subtitle: 'Provider',
-      description: 'Model description goes here...',
-      rating: '4.5',
-      pricing: '$0.02/1K in',
-      responseTime: '~2-3s',
-      capabilities: ['Text', 'Code', 'Analysis']
-    }
-  })
 
   useEffect(() => {
     loadModels()
@@ -89,84 +53,32 @@ export function ModelsContent() {
       setIsLoading(true)
       setError(null)
 
-      // Fetch models with their best available provider using Turso
-      const modelsResult = await turso.execute(`
-        SELECT
-          m.id,
-          m.name,
-          m.category,
-          m.capabilities,
-          m.description,
-          m.context_window,
-          m.response_time,
-          mp.provider,
-          mp.pricing,
-          mp.priority,
-          mp.is_active
-        FROM models m
-        LEFT JOIN model_providers mp ON m.id = mp.model_id
-        WHERE mp.is_active = 1
-        ORDER BY m.name, mp.priority ASC
-      `)
-
-      if (modelsResult.rows.length > 0) {
-        // Group by model and get the best provider for each
-        const modelMap = new Map()
-
-        modelsResult.rows.forEach(row => {
-          const modelId = row.id as string
-          if (!modelMap.has(modelId)) {
-            modelMap.set(modelId, {
-              id: modelId,
-              name: row.name as string,
-              category: row.category as string,
-              capabilities: JSON.parse(row.capabilities as string || '[]'),
-              description: row.description as string || '',
-              context_window: row.context_window as string,
-              response_time: row.response_time as string,
-              providers: []
-            })
-          }
-          if (row.provider) {
-            modelMap.get(modelId).providers.push({
-              provider: row.provider as string,
-              pricing: JSON.parse(row.pricing as string || '{}'),
-              priority: row.priority as number,
-              is_active: row.is_active as number
-            })
-          }
-        })
-
-        // Transform to expected format
-        const transformedModels: AIModel[] = Array.from(modelMap.values()).map(modelData => {
-          const bestProvider = modelData.providers.sort((a: { priority: number }, b: { priority: number }) => a.priority - b.priority)[0]
-
-          return {
-            id: modelData.id,
-            name: modelData.name,
-            provider: bestProvider?.provider || 'Unknown',
-            description: modelData.description,
-            capabilities: modelData.capabilities,
-            pricing: {
-              inputTokens: bestProvider?.pricing?.inputTokens || '',
-              outputTokens: bestProvider?.pricing?.outputTokens || '',
-            },
-            rating: 4.5,
-            contextWindow: parseInt(modelData.context_window?.replace(/[^\d]/g, '') || '0'),
-            responseTime: modelData.response_time || 'Unknown',
-            status: 'available' as const
-          }
-        })
-
-        setModels(transformedModels)
-
-        // Extract unique providers
-        const uniqueProviders = ['all', ...new Set(transformedModels.map(m => m.provider))]
-        setProviders(uniqueProviders)
-      } else {
-        // No data from Turso, show demo data
-        throw new Error('No models found')
+      const response = await fetch('/api/models')
+      if (!response.ok) {
+        throw new Error('Failed to fetch models')
       }
+
+      const modelsData = await response.json()
+
+      // Transform to AIModel format
+      const transformedModels: AIModel[] = modelsData.map((model: APIModel) => ({
+        id: model.id,
+        name: model.name,
+        provider: model.provider,
+        description: model.tooltip || '',
+        capabilities: model.capabilities,
+        pricing: { inputTokens: '', outputTokens: '' }, // Not in new schema
+        rating: 4.5, // Default
+        contextWindow: 0, // Not in new schema
+        responseTime: '', // Not in new schema
+        status: model.status === 'available' ? 'available' : 'unavailable' as const
+      }))
+
+      setModels(transformedModels)
+
+      // Extract unique providers
+      const uniqueProviders = ['all', ...new Set(transformedModels.map(m => m.provider))]
+      setProviders(uniqueProviders)
     } catch (err) {
       console.error('Error loading models:', err)
       // Fallback to demo data
@@ -206,7 +118,7 @@ export function ModelsContent() {
   const filteredModels = models.filter(model => {
     const matchesSearch = model.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          model.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         model.capabilities.some(cap => cap.toLowerCase().includes(searchTerm.toLowerCase()))
+                         model.capabilities.some((cap: string) => cap.toLowerCase().includes(searchTerm.toLowerCase()))
     const matchesProvider = selectedProvider === "all" || model.provider.toLowerCase() === selectedProvider
     return matchesSearch && matchesProvider
   })
@@ -283,93 +195,18 @@ export function ModelsContent() {
       {/* Models Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {filteredModels.map(model => (
-          <Card key={model.id} className="cursor-pointer hover:shadow-md transition-shadow">
-            <CardHeader className="pb-2">
-              <div className="flex items-start justify-between">
-                <div>
-                  <CardTitle className="text-lg" style={{ fontFamily: 'var(--font-audiowide)', fontWeight: 300 }}>{model.name}</CardTitle>
-                  {/* NOTE: Spacing between provider name and capabilities has been carefully adjusted to -16px overlap. DO NOT change this gap. */}
-                  <CardDescription className="text-sm -mb-6">{model.provider}</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="flex flex-col pt-0 min-h-[120px]">
-              <div className="space-y-0.25">
-                {model.capabilities.slice(0, 4).map(capability => (
-                  <div key={capability} className="flex items-center text-sm text-muted-foreground">
-                    <span className="mr-2">•</span>
-                    <span>{capability}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex gap-2 mt-auto pt-4">
-                <Button size="sm" className="flex-1">
-                  <Zap className="h-4 w-4 mr-1" />
-                  <span className="text-2xl font-medium font-audiowide">Tap to Try</span>
-                </Button>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" size="sm" className="rounded-full w-6 h-6 p-0 hover:bg-muted">
-                      <Info className="h-3 w-3" />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-2xl">
-                    <DialogHeader>
-                      <DialogTitle className="flex items-center gap-3">
-                        <span style={{ fontFamily: 'var(--font-audiowide)', fontWeight: 300 }}>{model.name}</span>
-                        <Badge variant="secondary">{model.provider}</Badge>
-                      </DialogTitle>
-                      <DialogDescription>{model.description}</DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <span className="font-medium">Context Window:</span>
-                          <p className="text-muted-foreground">{model.contextWindow}</p>
-                        </div>
-                        <div>
-                          <span className="font-medium">Response Time:</span>
-                          <p className="text-muted-foreground">{model.responseTime}</p>
-                        </div>
-                        <div>
-                          <span className="font-medium">Pricing:</span>
-                          <p className="text-green-600 font-medium">
-                            {model.pricing.inputTokens} input / {model.pricing.outputTokens} output
-                          </p>
-                        </div>
-                        <div>
-                          <span className="font-medium">Rating:</span>
-                          <p className="text-muted-foreground">{model.rating}/5.0</p>
-                        </div>
-                      </div>
-
-                      <div>
-                        <span className="font-medium">Capabilities:</span>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {model.capabilities.map(capability => (
-                            <Badge key={capability} variant="secondary">
-                              {capability}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="flex gap-2 pt-4">
-                        <Button className="flex-1">
-                          <Zap className="h-4 w-4 mr-2" />
-                          Try Model
-                        </Button>
-                        <Button variant="outline" className="flex-1">
-                          View Documentation
-                        </Button>
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            </CardContent>
-          </Card>
+          <ModelCard
+            key={model.id}
+            name={model.name}
+            provider={model.provider}
+            capabilities={model.capabilities}
+            tooltip={model.description}
+            status={model.status === 'available' ? 'available' : 'unavailable'}
+            onTry={() => {
+              // TODO: Implement try model functionality
+              console.log('Try model:', model.name)
+            }}
+          />
         ))}
       </div>
 

@@ -1,65 +1,94 @@
 "use client"
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from "react"
-import ModelAdmin from "@/components/admin/model-admin"
-import { ModelCard } from "@/components/models"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { CustomizationFooter } from "@/components/admin/customization-footer"
-import { PageBuilder } from "@/components/admin/page-builder"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Switch } from "@/components/ui/switch"
+import { Badge } from "@/components/ui/badge"
+import { ModelCard } from "@/components/models/model-card"
+import ModelAdmin from "@/components/admin/model-admin"
+import {
+  Settings,
+  Layout,
+  Move,
+  Palette,
+  Menu,
+  Server,
+  Plus,
+  Edit,
+  Wifi,
+  FileText,
+  Save
+} from "lucide-react"
 import { useAdminMode } from "@/contexts/admin-mode-context"
 
-interface ModelFormData {
-  name: string;
-  provider: string;
-  category: string;
-  capabilities: string[];
-  description: string;
-  contextWindow: string;
-  responseTime: string;
-  inputTokens: string;
-  outputTokens: string;
-}
-
-interface PreviewModel {
-  id: string
-  name: string
-  provider: string
-  description: string
-  capabilities: string[]
-  pricing: {
-    inputTokens: string
-    outputTokens: string
-  }
-  rating: number
-  contextWindow: string
-  responseTime: string
-  status: 'available' | 'beta' | 'deprecated'
-}
-
 export function AdminPanel() {
-  const [previewModel, setPreviewModel] = useState<PreviewModel | null>(null)
-  const [currentPageId, setCurrentPageId] = useState('home')
+  const [activeSection, setActiveSection] = useState<string | null>(null)
   const { isAdminMode, toggleAdminMode } = useAdminMode()
 
-  const handleFormChange = (formData: ModelFormData) => {
-    // Convert form data to preview model format
-    const preview: PreviewModel = {
-      id: formData.name.toLowerCase().replace(/\s+/g, '-'),
-      name: formData.name || 'Model Name',
-      provider: formData.provider || 'Provider',
-      description: formData.description || 'Model description will appear here...',
-      capabilities: formData.capabilities.length > 0 ? formData.capabilities : ['Capability 1', 'Capability 2', 'Capability 3'],
-      pricing: {
-        inputTokens: formData.inputTokens || '$0.00',
-        outputTokens: formData.outputTokens || '$0.00',
-      },
-      rating: 4.5,
-      contextWindow: formData.contextWindow || 'Unknown',
-      responseTime: formData.responseTime || 'Unknown',
-      status: 'available'
+  const adminSections = [
+    {
+      id: 'models',
+      title: 'Models',
+      description: 'Manage AI models and providers',
+      icon: Settings,
+      color: 'bg-blue-500'
+    },
+    {
+      id: 'tools',
+      title: 'Tools',
+      description: 'Admin tools and shortcuts',
+      icon: Settings,
+      color: 'bg-green-500'
+    },
+    {
+      id: 'cards',
+      title: 'Cards',
+      description: 'Manage custom cards and content',
+      icon: Layout,
+      color: 'bg-purple-500'
+    },
+    {
+      id: 'layout',
+      title: 'Layout',
+      description: 'Configure page layouts',
+      icon: Move,
+      color: 'bg-orange-500'
+    },
+    {
+      id: 'styling',
+      title: 'Styling',
+      description: 'Customize themes and colors',
+      icon: Palette,
+      color: 'bg-pink-500'
+    },
+    {
+      id: 'navigation',
+      title: 'Navigation',
+      description: 'Manage menus and links',
+      icon: Menu,
+      color: 'bg-indigo-500'
+    },
+    {
+      id: 'servers',
+      title: 'Servers',
+      description: 'Monitor server connections',
+      icon: Server,
+      color: 'bg-red-500'
+    },
+    {
+      id: 'advanced',
+      title: 'Advanced',
+      description: 'Advanced settings and tools',
+      icon: Settings,
+      color: 'bg-gray-500'
     }
-    setPreviewModel(preview)
-  }
+  ]
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
@@ -68,90 +97,262 @@ export function AdminPanel() {
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Admin Panel</h2>
           <p className="text-muted-foreground">
-            Customize and manage your application settings
+            Manage your application settings and content
           </p>
         </div>
       </div>
 
-      {/* Page Builder Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Page Builder</CardTitle>
-          <CardDescription>
-            Customize the content and layout for the selected page. Drag and drop components to build your page.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <PageBuilder pageId={currentPageId} isAdminMode={true} />
-        </CardContent>
-      </Card>
-
-      {/* AI Model Management Section */}
-      <div className="space-y-4">
-        <div>
-          <h3 className="text-xl font-semibold">AI Model Management</h3>
-          <p className="text-muted-foreground">
-            Add, update, and manage AI models and their provider configurations
-          </p>
-        </div>
-
-        {/* Two-column layout: Form on left, Preview on right */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Admin Form */}
-          <div>
-            <ModelAdmin onFormChange={handleFormChange} />
-          </div>
-
-          {/* Preview Card */}
-          <div className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Model Card Preview</CardTitle>
-                <CardDescription>
-                  This shows how your model will appear to users
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {previewModel ? (
-                  <ModelCard
-                    id={previewModel.id}
-                    name={previewModel.name}
-                    provider={previewModel.provider}
-                    capabilities={previewModel.capabilities}
-                    description={previewModel.description}
-                    contextWindow={previewModel.contextWindow}
-                    responseTime={previewModel.responseTime}
-                    pricing={previewModel.pricing}
-                  />
-                ) : (
-                  <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center">
-                    <div className="text-muted-foreground">
-                      <div className="font-audiowide text-xl mb-2">Model Name</div>
-                      <div className="text-sm mb-2">by Provider</div>
-                      <div className="text-xs space-y-1">
-                        <div>• Capability 1</div>
-                        <div>• Capability 2</div>
-                        <div>• Capability 3</div>
-                      </div>
-                      <div className="mt-4 text-xs text-muted-foreground">
-                        Model description will appear here...
-                      </div>
-                    </div>
+      {/* Admin Section Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {adminSections.map((section) => {
+          const Icon = section.icon
+          return (
+            <Card
+              key={section.id}
+              className={`cursor-pointer transition-all duration-200 hover:shadow-lg ${
+                activeSection === section.id ? 'ring-2 ring-primary shadow-lg' : ''
+              }`}
+              onClick={() => setActiveSection(activeSection === section.id ? null : section.id)}
+            >
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-lg ${section.color} text-white`}>
+                    <Icon className="h-5 w-5" />
                   </div>
-                )}
+                  <div>
+                    <CardTitle className="text-lg">{section.title}</CardTitle>
+                    <CardDescription className="text-sm">{section.description}</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <Badge variant={activeSection === section.id ? "default" : "secondary"} className="text-xs">
+                  {activeSection === section.id ? 'Active' : 'Click to open'}
+                </Badge>
               </CardContent>
             </Card>
-          </div>
-        </div>
+          )
+        })}
       </div>
 
-      {/* Customization Management Footer */}
-      <CustomizationFooter
-        onPageChange={setCurrentPageId}
-        currentPageId={currentPageId}
-        onAdminModeToggle={toggleAdminMode}
-        isAdminMode={isAdminMode}
-      />
+      {/* Active Section Content */}
+      {activeSection && (
+        <Card className="mt-4">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              {(() => {
+                const section = adminSections.find(s => s.id === activeSection)
+                const Icon = section?.icon
+                return Icon ? <Icon className="h-5 w-5" /> : null
+              })()}
+              {adminSections.find(s => s.id === activeSection)?.title}
+            </CardTitle>
+            <CardDescription>
+              {adminSections.find(s => s.id === activeSection)?.description}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {activeSection === 'models' && (
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-xl font-semibold">AI Model Management</h3>
+                  <p className="text-muted-foreground">
+                    Add, update, and manage AI models and their provider configurations
+                  </p>
+                </div>
+
+                {/* Model Admin Form */}
+                <ModelAdmin />
+              </div>
+            )}
+
+            {activeSection === 'tools' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Quick Actions */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Settings className="h-4 w-4" />
+                      Quick Actions
+                    </CardTitle>
+                    <CardDescription>
+                      Common administrative tasks and shortcuts
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start"
+                      onClick={() => window.location.hash = '#admin-panel'}
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      Model Administration
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start">
+                      <FileText className="h-4 w-4 mr-2" />
+                      Content Management
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start">
+                      <Server className="h-4 w-4 mr-2" />
+                      System Settings
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start">
+                      <Palette className="h-4 w-4 mr-2" />
+                      Theme Editor
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* System Status */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Wifi className="h-4 w-4" />
+                      System Status
+                    </CardTitle>
+                    <CardDescription>
+                      Current system health and connectivity
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Database</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span className="text-xs text-green-600">Connected</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">API Services</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span className="text-xs text-green-600">Online</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Admin Mode</span>
+                      <div className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${isAdminMode ? 'bg-blue-500' : 'bg-gray-400'}`}></div>
+                        <span className={`text-xs ${isAdminMode ? 'text-blue-600' : 'text-gray-500'}`}>
+                          {isAdminMode ? 'Enabled' : 'Disabled'}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="pt-2 border-t">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={toggleAdminMode}
+                        className="w-full"
+                      >
+                        {isAdminMode ? 'Disable' : 'Enable'} Admin Mode
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
+            {activeSection === 'cards' && (
+              <div className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Plus className="h-4 w-4" />
+                      Add New Card
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground">Card management functionality would go here</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
+            {activeSection === 'layout' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Layout Management</CardTitle>
+                  <CardDescription>
+                    Configure grid layouts, responsive breakpoints, and positioning.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">Layout configuration would go here</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {activeSection === 'styling' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Global Styling</CardTitle>
+                  <CardDescription>
+                    Customize colors, fonts, spacing, and visual themes.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">Theme customization would go here</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {activeSection === 'navigation' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Navigation Management</CardTitle>
+                  <CardDescription>
+                    Add menu items, tabs, sub-tabs, and navigation elements.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">Navigation management would go here</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {activeSection === 'servers' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Server Management</CardTitle>
+                  <CardDescription>
+                    Monitor and manage server connections and integrations.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">Server management would go here</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {activeSection === 'advanced' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Advanced Settings</CardTitle>
+                  <CardDescription>
+                    Advanced configuration and system settings.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">Advanced settings would go here</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }
